@@ -92,11 +92,11 @@
             <p class="text-stone-600 max-w-3xl leading-relaxed">
                 Research report mapping the probable distribution flow of Federal rural health funds across all 50 states. 
                 Data analysis suggests that funding routes primarily follow the established <strong>State Office of Rural Health (SORH)</strong> infrastructure. 
-                This tool predicts whether funds flow through State Departments of Health, Universities, or Independent Boards, assisting in strategic planning and procurement targeting.
+                This tool predicts whether funds flow through State Departments of Health, Universities, or Independent Boards, and maps the <strong>projected technology investment focus</strong> to assist in strategic Dell procurement targeting.
             </p>
             <div class="mt-4 flex flex-wrap gap-2 text-sm text-stone-500">
                 <span class="bg-white px-3 py-1 rounded-full border border-stone-200">Scope: National (50 States)</span>
-                <span class="bg-white px-3 py-1 rounded-full border border-stone-200">Focus: Funding Distribution Logic</span>
+                <span class="bg-white px-3 py-1 rounded-full border border-stone-200">Focus: Funding Distribution & Tech Alignment</span>
                 <span class="bg-white px-3 py-1 rounded-full border border-stone-200">Update: Q1 2026 Estimates</span>
             </div>
         </header>
@@ -113,15 +113,11 @@
                 <div class="space-y-3">
                     <div class="flex items-start">
                         <div class="w-2 h-2 rounded-full bg-teal-600 mt-1.5 mr-2"></div>
-                        <p class="text-xs text-stone-500"><strong>State DOH (78%):</strong> Funds managed by Health Dept. High probability of sub-grants or centralized procurement.</p>
+                        <p class="text-xs text-stone-500"><strong>State DOH (84%):</strong> Funds managed by Health Dept. High probability of sub-grants or centralized procurement.</p>
                     </div>
                     <div class="flex items-start">
                         <div class="w-2 h-2 rounded-full bg-indigo-500 mt-1.5 mr-2"></div>
                         <p class="text-xs text-stone-500"><strong>University (16%):</strong> Funds managed by Academic Centers. Focus on education, data, and technical services.</p>
-                    </div>
-                    <div class="flex items-start">
-                        <div class="w-2 h-2 rounded-full bg-amber-500 mt-1.5 mr-2"></div>
-                        <p class="text-xs text-stone-500"><strong>Other/Ag (6%):</strong> Funds managed by Dept of Agriculture or Non-Profits.</p>
                     </div>
                 </div>
             </div>
@@ -136,7 +132,7 @@
 
             <!-- Viz 2: Procurement Insight -->
             <div class="md:col-span-4 bg-white p-6 rounded-xl shadow-sm border border-stone-200">
-                <h3 class="text-sm font-semibold text-stone-500 uppercase tracking-wide mb-4">Route Complexity Analysis</h3>
+                <h3 class="text-sm font-semibold text-stone-500 uppercase tracking-wide mb-4">Projected Tech Investment Focus</h3>
                 <div class="chart-container">
                     <canvas id="complexityChart"></canvas>
                 </div>
@@ -179,7 +175,8 @@
                             <div class="flex justify-between items-start">
                                 <div>
                                     <h2 id="detailName" class="text-3xl font-bold">State Name</h2>
-                                    <span id="detailType" class="inline-block mt-2 bg-teal-800 text-teal-100 text-xs px-2 py-1 rounded border border-teal-700">Recipient Type</span>
+                                    <span id="detailType" class="inline-block mt-2 bg-teal-800 text-teal-100 text-xs px-2 py-1 rounded border border-teal-700 mr-2">Recipient Type</span>
+                                    <span id="detailTech" class="inline-block mt-2 bg-indigo-800 text-indigo-100 text-xs px-2 py-1 rounded border border-indigo-700">Tech Focus</span>
                                 </div>
                                 <span id="detailAbbr" class="text-4xl font-bold text-teal-800 opacity-50">ST</span>
                             </div>
@@ -228,70 +225,70 @@
     <!-- Application Logic -->
     <script>
         // --- Data Source: Rural Health Funding Landscape ---
-        // Based on State Office of Rural Health (SORH) locations and historical HRSA/CDC grant flows.
+        // Updated with 2026 Tech Investment Focus mapping for Dell
         const stateData = [
-            { abbr: "AL", name: "Alabama", type: "doh", recipient: "AL Dept of Public Health", confidence: "high", route: "Funds flow to ADPH. Likely retained for technical assistance programs and sub-granted to rural hospitals for specific quality initiatives.", insight: "Target State Health IT procurement; centralized decision making." },
-            { abbr: "AK", name: "Alaska", type: "doh", recipient: "AK DHSS", confidence: "high", route: "Funds flow to DHSS. Due to geography, significant portion likely used for telehealth infrastructure and travel/logistics support for remote clinics.", insight: "Focus on connectivity and telehealth infrastructure solutions." },
-            { abbr: "AZ", name: "Arizona", type: "university", recipient: "Univ of Arizona (Center for Rural Health)", confidence: "high", route: "Funds go to University. Distribution focuses on workforce training, data analysis, and academic support to CAHs rather than direct cash transfers.", insight: "Target Academic Medical Center procurement; educational tech focus." },
-            { abbr: "AR", name: "Arkansas", type: "doh", recipient: "AR Dept of Health", confidence: "high", route: "Funds flow to ADH. Likely used to support the Rural Health Association and direct hospital quality improvement projects.", insight: "Mixed engagement with DOH and Hospital Association." },
-            { abbr: "CA", name: "California", type: "doh", recipient: "Dept of Health Care Access & Info (HCAI)", confidence: "high", route: "Funds go to HCAI (formerly OSHPD). Highly structured capital grants and workforce programs. Less likely to be simple cash distribution.", insight: "Strong focus on data reporting and workforce; sell analytic tools." },
-            { abbr: "CO", name: "Colorado", type: "doh", recipient: "CO Dept of Public Health & Env", confidence: "high", route: "Funds flow to CDPHE. Strong history of collaborative grants with the Colorado Rural Health Center (non-profit). Money likely splits between state and non-profit.", insight: "Partner with CO Rural Health Center (Non-profit) for reach." },
-            { abbr: "CT", name: "Connecticut", type: "doh", recipient: "CT Dept of Public Health", confidence: "medium", route: "Funds flow to DPH. Since CT has few 'rural' definitions compared to west, funds likely support primary care offices rather than hospitals.", insight: "Focus on primary care networks/FQHCs." },
-            { abbr: "DE", name: "Delaware", type: "doh", recipient: "DE DHSS", confidence: "medium", route: "Funds flow to DHSS. Likely used for recruitment/retention programs and state-wide health planning.", insight: "State-level consulting services." },
-            { abbr: "FL", name: "Florida", type: "doh", recipient: "FL Dept of Health", confidence: "high", route: "Funds flow to DOH. Strong decentralization to County Health Departments. Funds likely support county-level rural initiatives.", insight: "Target County Health Departments individually." },
-            { abbr: "GA", name: "Georgia", type: "doh", recipient: "GA Dept of Community Health", confidence: "high", route: "Funds go to State Office of Rural Health (within DCH). Heavy focus on hospital stabilization and financial solvency.", insight: "Financial software and ERP solutions for struggling hospitals." },
-            { abbr: "HI", name: "Hawaii", type: "doh", recipient: "HI Dept of Health", confidence: "medium", route: "Funds flow to DOH. Likely used to subsidize transport/access between islands and support small island clinics.", insight: "Logistics and communication infrastructure." },
-            { abbr: "ID", name: "Idaho", type: "doh", recipient: "ID Dept of Health & Welfare", confidence: "high", route: "Funds flow to DHW. Often works closely with Idaho Hospital Association for distribution of training funds.", insight: "Partner with Hospital Association." },
-            { abbr: "IL", name: "Illinois", type: "doh", recipient: "IL Dept of Public Health", confidence: "high", route: "Funds flow to IDPH. Traditional sub-granting model to Critical Access Hospitals (CAHs) for equipment and QI.", insight: "Direct sales to CAHs using state grant money." },
-            { abbr: "IN", name: "Indiana", type: "doh", recipient: "IN Dept of Health", confidence: "high", route: "Funds flow to IDOH. Strong partnership with Indiana Rural Health Association. Likely a collaborative implementation.", insight: "Engage with IRHA for statewide reach." },
-            { abbr: "IA", name: "Iowa", type: "doh", recipient: "IA Dept of Public Health", confidence: "high", route: "Funds flow to IDPH. Highly organized Bureau of Oral and Health Delivery Systems. Likely programmatic distribution.", insight: "State level programmatic support." },
-            { abbr: "KS", name: "Kansas", type: "doh", recipient: "KS Dept of Health & Env", confidence: "high", route: "Funds flow to KDHE. Likely directed toward community health needs assessments and supporting local health departments.", insight: "Local Health Department tech upgrades." },
-            { abbr: "KY", name: "Kentucky", type: "university", recipient: "Univ of Kentucky (Center of Excellence)", confidence: "high", route: "Funds flow to UK. A focus on research, policy analysis, and workforce education. Less direct capital for hospitals.", insight: "Academic/Research partnership opportunity." },
-            { abbr: "LA", name: "Louisiana", type: "doh", recipient: "LA Dept of Health", confidence: "high", route: "Bureau of Primary Care and Rural Health. Likely flows to FQHCs and Rural Health Clinics for capacity building.", insight: "FQHC network IT infrastructure." },
-            { abbr: "ME", name: "Maine", type: "doh", recipient: "ME DHHS (CDC)", confidence: "medium", route: "Funds flow to Maine CDC. Strong emphasis on public health infrastructure integration with rural care.", insight: "Public Health/Clinical integration software." },
-            { abbr: "MD", name: "Maryland", type: "doh", recipient: "MD Dept of Health", confidence: "high", route: "Funds flow to State Office of Rural Health. Maryland has a unique All-Payer model; funds likely used for system transformation consulting.", insight: "High-level consulting and data interoperability." },
-            { abbr: "MA", name: "Massachusetts", type: "doh", recipient: "MA Dept of Public Health", confidence: "medium", route: "Funds flow to DPH. Focus on western MA health equity and small hospital stability.", insight: "Niche market in Western MA." },
-            { abbr: "MI", name: "Michigan", type: "doh", recipient: "MI Dept of Health & Human Services", confidence: "high", route: "Funds flow to MDHHS. Strong partnership with Michigan Center for Rural Health (University-affiliate). Likely a hybrid execution.", insight: "Complex stakeholder map; start with MDHHS." },
-            { abbr: "MN", name: "Minnesota", type: "doh", recipient: "MN Dept of Health", confidence: "high", route: "Office of Rural Health & Primary Care. Very sophisticated grant making. Funds likely sub-granted competitively to hospitals/clinics.", insight: "Hospitals will have grant money to spend; sell directly." },
-            { abbr: "MS", name: "Mississippi", type: "doh", recipient: "MS State Dept of Health", confidence: "high", route: "Funds flow to MSDH. Crisis management focus. Likely direct support for keeping rural hospitals open.", insight: "Cost-reduction technologies." },
-            { abbr: "MO", name: "Missouri", type: "doh", recipient: "MO Dept of Health & Senior Services", confidence: "high", route: "Funds flow to DHSS. Likely used for operational support and sharing best practices among CAHs.", insight: "State-wide shared services platforms." },
-            { abbr: "MT", name: "Montana", type: "university", recipient: "Montana State Univ", confidence: "high", route: "Funds flow to MSU. Strong education and AHEC focus. Distribution via training and technical assistance.", insight: "Sell educational tech and simulation gear." },
-            { abbr: "NE", name: "Nebraska", type: "doh", recipient: "NE Dept of Health & Human Services", confidence: "high", route: "Funds flow to DHHS. Sub-grants to local hospitals for specific QI and financial/operational improvements.", insight: "Hospital operational efficiency tools." },
-            { abbr: "NV", name: "Nevada", type: "university", recipient: "Univ of Nevada, Reno", confidence: "high", route: "Funds flow to UNR School of Medicine. Focus on telehealth and workforce extension into vast remote areas.", insight: "Telehealth backbone infrastructure." },
-            { abbr: "NH", name: "New Hampshire", type: "doh", recipient: "NH Dept of Health & Human Services", confidence: "medium", route: "Funds flow to DHHS. Focus on behavioral health integration in rural areas.", insight: "Behavioral health platforms." },
-            { abbr: "NJ", name: "New Jersey", type: "doh", recipient: "NJ Dept of Health", confidence: "low", route: "Funds flow to DOH. NJ has limited 'rural' areas; funds likely directed to specific southern NJ health networks.", insight: "Target specific health networks." },
-            { abbr: "NM", name: "New Mexico", type: "doh", recipient: "NM Dept of Health", confidence: "high", route: "Funds flow to DOH. Focus on primary care access and tribal health integration.", insight: "Tribal health IT infrastructure." },
-            { abbr: "NY", name: "New York", type: "doh", recipient: "NY State Dept of Health", confidence: "high", route: "Charles D. Cook Office of Rural Health. Large bureaucracy; funds likely used for network planning grants.", insight: "Network-level analytics." },
-            { abbr: "NC", name: "North Carolina", type: "doh", recipient: "NC DHHS", confidence: "high", route: "Office of Rural Health (one of the oldest in US). Direct grants to safety net providers and farmworker health.", insight: "Safety net provider solutions." },
-            { abbr: "ND", name: "North Dakota", type: "university", recipient: "Univ of North Dakota", confidence: "high", route: "Center for Rural Health at UND. Academic-led distribution. Focus on community engagement and research.", insight: "Research data tools." },
-            { abbr: "OH", name: "Ohio", type: "doh", recipient: "OH Dept of Health", confidence: "high", route: "Funds flow to ODH. Likely competitive sub-grants to rural communities for health equity projects.", insight: "Community health platform tools." },
-            { abbr: "OK", name: "Oklahoma", type: "university", recipient: "Oklahoma State Univ", confidence: "high", route: "Center for Rural Health at OSU. Medical school integration. Focus on physician pipeline.", insight: "Medical education tech." },
-            { abbr: "OR", name: "Oregon", type: "university", recipient: "Oregon Health & Science Univ (OHSU)", confidence: "high", route: "Office of Rural Health at OHSU. Academic management. Strong focus on provider tax credits and recruitment.", insight: "Workforce management software." },
-            { abbr: "PA", name: "Pennsylvania", type: "doh", recipient: "PA Dept of Health", confidence: "medium", route: "Funds flow to DOH. Likely partnership with PA Office of Rural Health (Penn State). Hybrid model.", insight: "Complex environment; target Penn State partnership." },
-            { abbr: "RI", name: "Rhode Island", type: "doh", recipient: "RI Dept of Health", confidence: "low", route: "Funds flow to DOH. Very limited rural scope. Funds used for health equity in outlying areas.", insight: "Niche/Limited opportunity." },
-            { abbr: "SC", name: "South Carolina", type: "doh", recipient: "SC Office of Rural Health (Non-Profit/DOH)", confidence: "medium", route: "SCORH is a unique Non-Profit often designated by the state. Funds flow to SCORH, then to hospitals as services.", insight: "Direct relationship with Non-Profit SCORH." },
-            { abbr: "SD", name: "South Dakota", type: "doh", recipient: "SD Dept of Health", confidence: "high", route: "Funds flow to DOH. Focus on EMS and CAH stability. Direct support.", insight: "EMS technology and comms." },
-            { abbr: "TN", name: "Tennessee", type: "doh", recipient: "TN Dept of Health", confidence: "high", route: "Funds flow to TDH. Strong focus on replacing closed hospitals with new models (REH).", insight: "New facility infrastructure." },
-            { abbr: "TX", name: "Texas", type: "other", recipient: "TX Dept of Agriculture", confidence: "high", route: "Unique: SORH is in Dept of Agriculture. Funds flow to TDA. Heavy focus on economic development/infrastructure aspect of health.", insight: "Rural broadband and physical infrastructure." },
-            { abbr: "UT", name: "Utah", type: "doh", recipient: "UT Dept of Health", confidence: "high", route: "Funds flow to DOH. Focus on telehealth and independent hospital survival.", insight: "Telehealth focus." },
-            { abbr: "VT", name: "Vermont", type: "doh", recipient: "VT Dept of Health", confidence: "high", route: "Funds flow to DOH. Integrated with Blueprint for Health (primary care reform).", insight: "Primary care reform tools." },
-            { abbr: "VA", name: "Virginia", type: "doh", recipient: "VA Dept of Health", confidence: "high", route: "Funds flow to VDH. Focus on health equity and social determinants.", insight: "SDOH data platforms." },
-            { abbr: "WA", name: "Washington", type: "doh", recipient: "WA State Dept of Health", confidence: "high", route: "Funds flow to DOH. Collaborative with WSU. Strong focus on system transformation and value-based care.", insight: "Value-based care analytics." },
-            { abbr: "WV", name: "West Virginia", type: "doh", recipient: "WV DHHR", confidence: "high", route: "Funds flow to DHHR. Critical support for a very distressed rural hospital network.", insight: "Distressed asset turnaround tools." },
-            { abbr: "WI", name: "Wisconsin", type: "university", recipient: "Univ of Wisconsin", confidence: "high", route: "WI Office of Rural Health at UW. Academic focus but strong operational support for hospitals.", insight: "Hybrid Academic/Operational tools." },
-            { abbr: "WY", name: "Wyoming", type: "doh", recipient: "WY Dept of Health", confidence: "high", route: "Funds flow to WDH. Focus on frontier medicine and distance solutions.", insight: "Frontier connectivity solutions." }
+            { abbr: "AL", name: "Alabama", type: "doh", techFocus: "Cloud & Edge", recipient: "AL Dept of Public Health", confidence: "high", route: "Funds flow to ADPH. Likely retained for technical assistance programs and sub-granted to rural hospitals for specific quality initiatives.", insight: "Position VxRail and PowerEdge for modernizing legacy on-prem hospital servers." },
+            { abbr: "AK", name: "Alaska", type: "doh", techFocus: "Telehealth & Endpoints", recipient: "AK DHSS", confidence: "high", route: "Funds flow to DHSS. Due to geography, significant portion likely used for telehealth infrastructure and travel/logistics support for remote clinics.", insight: "Focus on Latitude Rugged devices and edge gateways for extreme remote connectivity." },
+            { abbr: "AZ", name: "Arizona", type: "university", techFocus: "Data & AI", recipient: "Univ of Arizona", confidence: "high", route: "Funds go to University. Distribution focuses on workforce training, data analysis, and academic support to CAHs.", insight: "Target AI-ready workstations and high-compute servers for university-led population health research." },
+            { abbr: "AR", name: "Arkansas", type: "doh", techFocus: "Cybersecurity", recipient: "AR Dept of Health", confidence: "high", route: "Funds flow to ADH. High priority on securing patient data across disparate rural clinic networks.", insight: "Lead with Zero-Trust infrastructure and PowerProtect backup/recovery solutions." },
+            { abbr: "CA", name: "California", type: "doh", techFocus: "Data & AI", recipient: "Dept of Health Care Access & Info", confidence: "high", route: "Funds go to HCAI. Highly structured capital grants. Less likely to be simple cash distribution.", insight: "Strong focus on statewide data reporting; position APEX storage and data lake solutions." },
+            { abbr: "CO", name: "Colorado", type: "doh", techFocus: "Telehealth & Endpoints", recipient: "CO Dept of Public Health", confidence: "high", route: "Funds flow to CDPHE. Strong history of collaborative grants with the Colorado Rural Health Center.", insight: "Partner with non-profits to supply standardized OptiPlex and Latitude telehealth carts." },
+            { abbr: "CT", name: "Connecticut", type: "doh", techFocus: "Cybersecurity", recipient: "CT Dept of Public Health", confidence: "medium", route: "Funds flow to DPH. Since CT has few 'rural' definitions, funds likely support primary care network security.", insight: "Focus on endpoint security and compliance solutions for FQHCs." },
+            { abbr: "DE", name: "Delaware", type: "doh", techFocus: "Data & AI", recipient: "DE DHSS", confidence: "medium", route: "Funds flow to DHSS. Likely used for recruitment/retention programs and state-wide health planning.", insight: "Position analytics dashboards and backend storage for state-level health planning." },
+            { abbr: "FL", name: "Florida", type: "doh", techFocus: "Cloud & Edge", recipient: "FL Dept of Health", confidence: "high", route: "Funds flow to DOH. Strong decentralization to County Health Departments.", insight: "Target individual County Health Departments with standardized edge server deployments." },
+            { abbr: "GA", name: "Georgia", type: "doh", techFocus: "Cybersecurity", recipient: "GA Dept of Community Health", confidence: "high", route: "Funds go to State Office of Rural Health. 2026 Shift: Emergency reallocation of funds specifically to combat rural hospital ransomware attacks.", insight: "Urgent need for immutable backups, endpoint detection (MDR), and ransomware recovery (PowerProtect)." },
+            { abbr: "HI", name: "Hawaii", type: "doh", techFocus: "Telehealth & Endpoints", recipient: "HI Dept of Health", confidence: "medium", route: "Funds flow to DOH. Likely used to subsidize transport/access between islands.", insight: "Logistics, mobile connectivity, and rugged edge endpoints for inter-island care." },
+            { abbr: "ID", name: "Idaho", type: "doh", techFocus: "Telehealth & Endpoints", recipient: "ID Dept of Health & Welfare", confidence: "high", route: "Funds flow to DHW. Often works closely with Idaho Hospital Association.", insight: "Bundle telehealth hardware solutions with Hospital Association training programs." },
+            { abbr: "IL", name: "Illinois", type: "doh", techFocus: "Cloud & Edge", recipient: "IL Dept of Public Health", confidence: "high", route: "Funds flow to IDPH. Traditional sub-granting model to Critical Access Hospitals (CAHs) for equipment.", insight: "Direct sales to CAHs using state grant money for server and storage refreshes." },
+            { abbr: "IN", name: "Indiana", type: "doh", techFocus: "Telehealth & Endpoints", recipient: "IN Dept of Health", confidence: "high", route: "Funds flow to IDOH. Strong partnership with Indiana Rural Health Association.", insight: "Engage IRHA to deploy standardized remote-care endpoint packages." },
+            { abbr: "IA", name: "Iowa", type: "doh", techFocus: "Cybersecurity", recipient: "IA Dept of Public Health", confidence: "high", route: "Funds flow to IDPH. Highly organized state systems requiring secure integrations.", insight: "Focus on network security and secure remote access for distributed clinics." },
+            { abbr: "KS", name: "Kansas", type: "doh", techFocus: "Cloud & Edge", recipient: "KS Dept of Health & Env", confidence: "high", route: "Funds flow to KDHE. Likely directed toward local health departments.", insight: "Local Health Department infrastructure modernization (servers/switches)." },
+            { abbr: "KY", name: "Kentucky", type: "university", techFocus: "Data & AI", recipient: "Univ of Kentucky", confidence: "high", route: "Funds flow to UK. A focus on research, policy analysis, and workforce education.", insight: "Academic computing environments; position high-performance computing (HPC) nodes." },
+            { abbr: "LA", name: "Louisiana", type: "doh", techFocus: "Cloud & Edge", recipient: "LA Dept of Health", confidence: "high", route: "Bureau of Primary Care and Rural Health. Likely flows to FQHCs for capacity building.", insight: "FQHC network infrastructure upgrades and centralized data management." },
+            { abbr: "ME", name: "Maine", type: "doh", techFocus: "Data & AI", recipient: "ME DHHS", confidence: "medium", route: "Funds flow to Maine CDC. Strong emphasis on public health infrastructure integration.", insight: "Data interoperability solutions between rural clinics and the state CDC." },
+            { abbr: "MD", name: "Maryland", type: "doh", techFocus: "Data & AI", recipient: "MD Dept of Health", confidence: "high", route: "Funds flow to State Office of Rural Health. Maryland has a unique All-Payer model.", insight: "High-level consulting, value-based care analytics, and massive data storage." },
+            { abbr: "MA", name: "Massachusetts", type: "doh", techFocus: "Cybersecurity", recipient: "MA Dept of Public Health", confidence: "medium", route: "Funds flow to DPH. Focus on western MA health equity and small hospital stability.", insight: "Compliance and cybersecurity auditing tools for small independent hospitals." },
+            { abbr: "MI", name: "Michigan", type: "doh", techFocus: "Cybersecurity", recipient: "MI DHHS", confidence: "high", route: "Funds flow to MDHHS. Strong partnership with Michigan Center for Rural Health.", insight: "Statewide initiatives to secure rural health data exchanges; position Dell Security." },
+            { abbr: "MN", name: "Minnesota", type: "doh", techFocus: "Cloud & Edge", recipient: "MN Dept of Health", confidence: "high", route: "Office of Rural Health. Very sophisticated grant making. Sub-granted competitively.", insight: "Hospitals will have competitive grant money; target core infrastructure overhauls." },
+            { abbr: "MS", name: "Mississippi", type: "doh", techFocus: "Cloud & Edge", recipient: "MS State Dept of Health", confidence: "high", route: "Funds flow to MSDH. Crisis management focus. Likely direct support for keeping rural hospitals open.", insight: "Cost-reduction technologies; HCI (VxRail) to reduce IT headcount needs." },
+            { abbr: "MO", name: "Missouri", type: "doh", techFocus: "Cloud & Edge", recipient: "MO Dept of Health", confidence: "high", route: "Funds flow to DHSS. Likely used for operational support and sharing best practices.", insight: "State-wide shared services platforms and hybrid cloud implementations." },
+            { abbr: "MT", name: "Montana", type: "university", techFocus: "Telehealth & Endpoints", recipient: "Montana State Univ", confidence: "high", route: "Funds flow to MSU. Strong education and AHEC focus.", insight: "Simulation lab tech, VR training endpoints, and high-res medical displays." },
+            { abbr: "NE", name: "Nebraska", type: "doh", techFocus: "Cloud & Edge", recipient: "NE DHHS", confidence: "high", route: "Funds flow to DHHS. Sub-grants to local hospitals for specific QI and financial improvements.", insight: "Hospital operational efficiency tools; hyperconverged infrastructure." },
+            { abbr: "NV", name: "Nevada", type: "university", techFocus: "Telehealth & Endpoints", recipient: "Univ of Nevada, Reno", confidence: "high", route: "Funds flow to UNR. Focus on telehealth and workforce extension into vast remote areas.", insight: "Telehealth backbone infrastructure and remote edge computing devices." },
+            { abbr: "NH", name: "New Hampshire", type: "doh", techFocus: "Cybersecurity", recipient: "NH DHHS", confidence: "medium", route: "Funds flow to DHHS. Focus on behavioral health integration in rural areas.", insight: "Securing sensitive behavioral health data; endpoint encryption." },
+            { abbr: "NJ", name: "New Jersey", type: "doh", techFocus: "Data & AI", recipient: "NJ Dept of Health", confidence: "low", route: "Funds flow to DOH. NJ has limited 'rural' areas; funds likely directed to specific networks.", insight: "Target specific health networks with population health analytics hardware." },
+            { abbr: "NM", name: "New Mexico", type: "doh", techFocus: "Telehealth & Endpoints", recipient: "NM Dept of Health", confidence: "high", route: "Funds flow to DOH. Focus on primary care access and tribal health integration.", insight: "Tribal health clinic modernization; reliable endpoints and networking." },
+            { abbr: "NY", name: "New York", type: "doh", techFocus: "Data & AI", recipient: "NY State Dept of Health", confidence: "high", route: "Charles D. Cook Office of Rural Health. Funds likely used for network planning grants.", insight: "Network-level analytics and state-aggregated data center solutions." },
+            { abbr: "NC", name: "North Carolina", type: "doh", techFocus: "Cloud & Edge", recipient: "NC DHHS", confidence: "high", route: "Office of Rural Health. Direct grants to safety net providers and farmworker health.", insight: "Safety net provider tech refreshes; edge servers for remote clinics." },
+            { abbr: "ND", name: "North Dakota", type: "university", techFocus: "Data & AI", recipient: "Univ of North Dakota", confidence: "high", route: "Center for Rural Health at UND. Academic-led distribution. Focus on research.", insight: "Research data tools; scalable unstructured data storage (PowerScale)." },
+            { abbr: "OH", name: "Ohio", type: "doh", techFocus: "Cybersecurity", recipient: "OH Dept of Health", confidence: "high", route: "Funds flow to ODH. Likely competitive sub-grants to rural communities.", insight: "Bundle grant applications with standardized cybersecurity audits/hardware." },
+            { abbr: "OK", name: "Oklahoma", type: "university", techFocus: "Telehealth & Endpoints", recipient: "Oklahoma State Univ", confidence: "high", route: "Center for Rural Health at OSU. Medical school integration.", insight: "Medical education tech and mobile clinic endpoints." },
+            { abbr: "OR", name: "Oregon", type: "university", techFocus: "Data & AI", recipient: "OHSU", confidence: "high", route: "Office of Rural Health at OHSU. Academic management. Focus on provider tracking.", insight: "Workforce management data systems; university data center expansion." },
+            { abbr: "PA", name: "Pennsylvania", type: "doh", techFocus: "Cybersecurity", recipient: "PA Dept of Health", confidence: "medium", route: "Funds flow to DOH. Likely partnership with PA Office of Rural Health (Penn State).", insight: "Protecting academic-to-rural-hospital data pipelines." },
+            { abbr: "RI", name: "Rhode Island", type: "doh", techFocus: "Data & AI", recipient: "RI Dept of Health", confidence: "low", route: "Funds flow to DOH. Very limited rural scope. Funds used for health equity.", insight: "Health equity mapping requires heavy data analysis and visualization workstations." },
+            { abbr: "SC", name: "South Carolina", type: "doh", techFocus: "Cloud & Edge", recipient: "SC Office of Rural Health", confidence: "medium", route: "Funds flow to SCORH (Non-Profit), then to hospitals as services.", insight: "Direct relationship with SCORH to build a centralized managed cloud for hospitals." },
+            { abbr: "SD", name: "South Dakota", type: "doh", techFocus: "Telehealth & Endpoints", recipient: "SD Dept of Health", confidence: "high", route: "Funds flow to DOH. Focus on EMS and CAH stability. Direct support.", insight: "EMS technology, rugged tablets for ambulances, and comms gateways." },
+            { abbr: "TN", name: "Tennessee", type: "doh", techFocus: "Cloud & Edge", recipient: "TN Dept of Health", confidence: "high", route: "Funds flow to TDH. Strong focus on replacing closed hospitals with new models (REH).", insight: "New Rural Emergency Hospital (REH) builds mean ground-up IT infrastructure (servers to endpoints)." },
+            { abbr: "TX", name: "Texas", type: "doh", techFocus: "Cloud & Edge", recipient: "HHSC & TDA Joint Task Force", confidence: "high", route: "Major 2026 shift: Funds are now jointly managed by Health & Human Services (HHSC) and Dept. of Agriculture under a new Rural Hospital Resilience initiative. Moving away from just broadband to direct IT infrastructure grants for at-risk hospitals.", insight: "Massive opportunity for VxRail and PowerEdge as Texas aggressively modernizes on-prem data centers to prevent rural hospital closures." },
+            { abbr: "UT", name: "Utah", type: "doh", techFocus: "Telehealth & Endpoints", recipient: "UT Dept of Health", confidence: "high", route: "Funds flow to DOH. Focus on telehealth and independent hospital survival.", insight: "Telehealth focus; remote patient monitoring gateways." },
+            { abbr: "VT", name: "Vermont", type: "doh", techFocus: "Cybersecurity", recipient: "VT Dept of Health", confidence: "high", route: "Funds flow to DOH. Integrated with Blueprint for Health.", insight: "Securing primary care data exchanges across the state network." },
+            { abbr: "VA", name: "Virginia", type: "doh", techFocus: "Data & AI", recipient: "VA Dept of Health", confidence: "high", route: "Funds flow to VDH. Focus on health equity and social determinants.", insight: "Social Determinants of Health (SDOH) massive data processing infrastructure." },
+            { abbr: "WA", name: "Washington", type: "doh", techFocus: "Data & AI", recipient: "WA State Dept of Health", confidence: "high", route: "Funds flow to DOH. Collaborative with WSU. Strong focus on value-based care.", insight: "Value-based care analytics requiring high-performance computing clusters." },
+            { abbr: "WV", name: "West Virginia", type: "doh", techFocus: "Cloud & Edge", recipient: "WV DHHR", confidence: "high", route: "Funds flow to DHHR. Critical support for a very distressed rural hospital network.", insight: "Distressed asset turnaround; replace aging servers with efficient HCI solutions." },
+            { abbr: "WI", name: "Wisconsin", type: "university", techFocus: "Data & AI", recipient: "Univ of Wisconsin", confidence: "high", route: "WI Office of Rural Health at UW. Academic focus but strong operational support.", insight: "Hybrid Academic/Operational tools; university-managed cloud services." },
+            { abbr: "WY", name: "Wyoming", type: "doh", techFocus: "Data & AI", recipient: "WY Dept of Health", confidence: "high", route: "Funds flow to WDH. 2026 Shift: Building a centralized frontier-medicine data exchange rather than just endpoints.", insight: "Statewide data lakes and secure edge-to-core data pipelines." }
         ];
 
-        // --- Logic: Grid Generation & Interaction ---
+        // --- Logic: Map Generation & Interaction ---
         
         function initApp() {
             // 1. Render Map via Plotly
             function renderMap() {
                 const locations = stateData.map(s => s.abbr);
-                const hoverText = stateData.map(s => s.name + '<br>' + (s.type === 'doh' ? 'Health Dept' : s.type === 'university' ? 'University' : 'Other'));
+                const hoverText = stateData.map(s => s.name + '<br>' + (s.type === 'doh' ? 'Health Dept' : 'University'));
                 
                 // Map text categories to numerical values for Plotly's colorscale
-                const zValues = stateData.map(s => s.type === 'doh' ? 1 : (s.type === 'university' ? 2 : 3));
+                const zValues = stateData.map(s => s.type === 'doh' ? 1 : 2);
 
                 const trace = {
                     type: 'choropleth',
@@ -303,14 +300,12 @@
                     showscale: false, // Hide the numerical scale since it's categorical
                     colorscale: [
                         [0, '#0f766e'],    // Teal for 1 (DOH)
-                        [0.33, '#0f766e'], 
-                        [0.33, '#6366f1'], // Indigo for 2 (University)
-                        [0.66, '#6366f1'], 
-                        [0.66, '#f59e0b'], // Amber for 3 (Other)
-                        [1, '#f59e0b']
+                        [0.5, '#0f766e'], 
+                        [0.5, '#6366f1'],  // Indigo for 2 (University)
+                        [1, '#6366f1']
                     ],
                     zmin: 1,
-                    zmax: 3,
+                    zmax: 2,
                     marker: {
                         line: {
                             color: '#ffffff',
@@ -354,7 +349,16 @@
                 // Populate Text
                 document.getElementById('detailName').innerText = state.name;
                 document.getElementById('detailAbbr').innerText = state.abbr;
-                document.getElementById('detailType').innerText = state.type === 'doh' ? 'State Dept of Health' : state.type === 'university' ? 'University System' : 'Dedicated/Other Office';
+                document.getElementById('detailType').innerText = state.type === 'doh' ? 'State Dept of Health' : 'University System';
+                
+                // Populate New Tech Focus Badge
+                const techBadge = document.getElementById('detailTech');
+                techBadge.innerText = state.techFocus;
+                if(state.techFocus === 'Cybersecurity') techBadge.className = "inline-block mt-2 bg-red-800 text-red-100 text-xs px-2 py-1 rounded border border-red-700";
+                else if(state.techFocus === 'Cloud & Edge') techBadge.className = "inline-block mt-2 bg-blue-800 text-blue-100 text-xs px-2 py-1 rounded border border-blue-700";
+                else if(state.techFocus === 'Telehealth & Endpoints') techBadge.className = "inline-block mt-2 bg-green-800 text-green-100 text-xs px-2 py-1 rounded border border-green-700";
+                else techBadge.className = "inline-block mt-2 bg-purple-800 text-purple-100 text-xs px-2 py-1 rounded border border-purple-700";
+
                 document.getElementById('detailRoute').innerHTML = state.route;
                 document.getElementById('detailProcurement').innerText = state.insight;
                 
@@ -394,18 +398,28 @@
         // --- Chart Generation ---
         function renderCharts() {
             // Data Prep
-            const typeCounts = { doh: 0, university: 0, other: 0 };
-            stateData.forEach(s => typeCounts[s.type]++);
+            const typeCounts = { doh: 0, university: 0 };
+            const techCounts = { cyber: 0, edge: 0, telehealth: 0, data: 0 };
+
+            stateData.forEach(s => {
+                if (s.type === 'doh') typeCounts.doh++;
+                if (s.type === 'university') typeCounts.university++;
+                
+                if (s.techFocus === 'Cybersecurity') techCounts.cyber++;
+                if (s.techFocus === 'Cloud & Edge') techCounts.edge++;
+                if (s.techFocus === 'Telehealth & Endpoints') techCounts.telehealth++;
+                if (s.techFocus === 'Data & AI') techCounts.data++;
+            });
 
             // Chart 1: Entities
             const ctx1 = document.getElementById('entityChart').getContext('2d');
             new Chart(ctx1, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Health Dept', 'University', 'Other'],
+                    labels: ['Health Dept', 'University'],
                     datasets: [{
-                        data: [typeCounts.doh, typeCounts.university, typeCounts.other],
-                        backgroundColor: ['#0f766e', '#6366f1', '#f59e0b'], // Teal, Indigo, Amber
+                        data: [typeCounts.doh, typeCounts.university],
+                        backgroundColor: ['#0f766e', '#6366f1'], // Teal, Indigo
                         borderWidth: 0
                     }]
                 },
@@ -418,18 +432,16 @@
                 }
             });
 
-            // Chart 2: Complexity/Procurement
-            // Simple logic: If DOH -> "State Procurement", if Univ -> "Academic", if Other -> "Specialized"
+            // Chart 2: Projected Tech Investment (Updated for 2026 data)
             const ctx2 = document.getElementById('complexityChart').getContext('2d');
             new Chart(ctx2, {
                 type: 'bar',
                 data: {
-                    labels: ['State Gov Sales', 'Academic/Edu Sales', 'Specialized/Direct'],
+                    labels: ['Cloud & Edge', 'Telehealth', 'Data & AI', 'Cybersecurity'],
                     datasets: [{
-                        label: 'Addressable States',
-                        data: [typeCounts.doh, typeCounts.university, typeCounts.other],
-                        backgroundColor: '#d6d3d1',
-                        hoverBackgroundColor: '#0f766e',
+                        label: 'Number of States',
+                        data: [techCounts.edge, techCounts.telehealth, techCounts.data, techCounts.cyber],
+                        backgroundColor: ['#1e40af', '#166534', '#6b21a8', '#991b1b'], // Blue, Green, Purple, Red mapping to badges
                         borderRadius: 4
                     }]
                 },
@@ -438,11 +450,18 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        x: { beginAtZero: true, grid: { display: false } },
+                        x: { beginAtZero: true, grid: { display: false }, ticks: { stepSize: 5 } },
                         y: { grid: { display: false } }
                     },
                     plugins: {
-                        legend: { display: false }
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.raw + ' States focused on this area';
+                                }
+                            }
+                        }
                     }
                 }
             });
