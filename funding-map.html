@@ -3,229 +3,518 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rural Health Transformation | Funding Distribution Landscape</title>
-    <!-- Tailwind CSS -->
+    <title>RHTP Funding Map & Strategy - Dell Technologies</title>
+    
+    <!-- Scripts & Dependencies -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Plotly.js for the USA Map -->
     <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
 
-    <!-- Chosen Palette: "Warm Professional" - Grounded in warm neutrals (Stone/Sand) for the background to reduce eye strain, with professional Deep Teals and Slate Blues for data, and Muted Terra Cotta for highlights. This creates a calm, research-focused environment. -->
-
-    <!-- Application Structure Plan: 
-         1. Header & Context: Sets the stage, explaining the methodology (SORH/SHIP proxies) since specific 'Transformation' plans vary by state.
-         2. High-Level Dashboard: Two chart containers providing the "Executive Summary" view (Entity Type breakdown and Procurement Opportunity categorization).
-         3. Interactive State Grid (The "Map"): A functional, filterable grid of all 50 states. This replaces a geographic map (NO SVG) to allow for easier, equal-size interaction and quick scanning.
-         4. Detail Inspector Panel: A dynamic side-panel (or bottom panel on mobile) that updates when a state is clicked. This holds the deep-dive text, confidence levels, and specific routing logic requested by the user.
-         5. Logic: Vanilla JS handles state selection, updates the DOM for the details panel, and filters the grid.
-    -->
-
-    <!-- Visualization & Content Choices:
-         1. Report Info: Distribution of Funds -> Goal: Compare/Aggregate -> Viz: Doughnut Chart (Chart.js) -> Interaction: Hover for stats -> Justification: Quickly shows the dominance of Health Depts vs Universities.
-         2. Report Info: Procurement Strategy -> Goal: Inform -> Viz: Horizontal Bar Chart (Chart.js) -> Interaction: None -> Justification: Helps Dell understand who the buyer is (Gov vs Ed vs Hospital).
-         3. Report Info: State Specifics -> Goal: Explore/Organize -> Viz: Interactive Grid (HTML/Tailwind) -> Interaction: Click to Select -> Justification: Better than a dropdown for 50 items; allows color-coding by category.
-         4. Report Info: Specific Route/Confidence -> Goal: Detail -> Viz: Dynamic Text Panel -> Interaction: Updates on Grid Click -> Justification: Allows for the requested textual nuance ("Best Guess" vs "Documented").
-    -->
-
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
-
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f5f5f4; /* Stone-100 */
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dellBlue: '#0076CE',
+                        dellDark: '#00447C',
+                        dellLight: '#EBF4FA'
+                    },
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+                    }
+                }
+            }
         }
-
+    </script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        
         /* Chart Container Styling Rules */
         .chart-container {
             position: relative;
             width: 100%;
-            max-width: 100%; /* Constraints managed by parent grid */
-            margin-left: auto;
-            margin-right: auto;
-            height: 280px;
-            max-height: 300px;
-        }
-
-        .state-card {
-            transition: all 0.2s ease;
-        }
-        .state-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-        }
-        .state-card.active {
-            ring: 2px solid #0f766e; /* Teal-700 */
-            background-color: #f0fdfa; /* Teal-50 */
+            height: 250px;
+            max-height: 280px;
         }
 
         /* Map Container */
         #plotlyMap {
             width: 100%;
-            height: 450px;
+            height: 500px;
         }
 
-        /* Custom Scrollbar for the grid */
+        /* Custom scrollbars */
+        .table-container::-webkit-scrollbar,
         .custom-scroll::-webkit-scrollbar {
+            height: 8px;
             width: 8px;
         }
+        .table-container::-webkit-scrollbar-track,
         .custom-scroll::-webkit-scrollbar-track {
-            background: #e7e5e4;
-        }
-        .custom-scroll::-webkit-scrollbar-thumb {
-            background-color: #a8a29e;
+            background: #f1f5f9; 
             border-radius: 4px;
+        }
+        .table-container::-webkit-scrollbar-thumb,
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        .table-container::-webkit-scrollbar-thumb:hover,
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
         }
     </style>
 </head>
-<body class="text-stone-800">
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
 
-    <!-- Main App Container -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Global Navigation -->
+    <nav class="bg-dellBlue text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-server text-2xl"></i>
+                    <span class="font-bold text-xl tracking-tight">SLG Strategy: RHTP Intelligence</span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="hidden md:block text-sm font-medium bg-dellDark/50 px-4 py-1.5 rounded-full border border-white/10">
+                        <i class="fa-solid fa-calendar-days mr-2"></i>FY2026 - FY2030 ($50B)
+                    </div>
+                    <a href="https://dmonkey1001.github.io/rural-health-transformation/rht-program-funding.pdf" target="_blank" rel="noopener noreferrer" class="bg-white text-dellBlue px-4 py-1.5 rounded font-semibold text-sm hover:bg-slate-100 transition-colors shadow-sm flex items-center gap-2">
+                        <i class="fa-solid fa-file-pdf"></i> Source PDF
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Grid -->
+    <main class="flex-grow max-w-[1400px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-8">
         
-        <!-- Header Section -->
-        <header class="mb-8">
-            <h1 class="text-3xl font-bold text-slate-900 mb-2">Rural Health Transformation Landscape</h1>
-            <p class="text-stone-600 max-w-3xl leading-relaxed">
-                Research report mapping the probable distribution flow of Federal rural health funds across all 50 states. 
-                Data analysis suggests that funding routes primarily follow the established <strong>State Office of Rural Health (SORH)</strong> infrastructure. 
-                This tool predicts whether funds flow through State Departments of Health, Universities, or Independent Boards, and maps the <strong>projected technology investment focus</strong> to assist in strategic Dell procurement targeting.
-            </p>
-            <div class="mt-4 flex flex-wrap gap-2 text-sm text-stone-500">
-                <span class="bg-white px-3 py-1 rounded-full border border-stone-200">Scope: National (50 States)</span>
-                <span class="bg-white px-3 py-1 rounded-full border border-stone-200">Focus: Funding Distribution & Tech Alignment</span>
-                <span class="bg-white px-3 py-1 rounded-full border border-stone-200">Update: Q1 2026 Estimates</span>
-            </div>
-            <div>
-                <a href="https://dmonkey1001.github.io/rural-health-transformation/rht-program-funding.pdf" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 10px 20px; background-color: #0284c7; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 15px;">
-                    📄 View Backing Report (PDF)
-                </a>
-            </div>
-        </header>
+        <!-- Header -->
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Rural Health Transformation Program (RHTP)</h1>
+            <p class="mt-2 text-lg text-slate-600">State-by-State Distribution Analysis & Dell Infrastructure Sales Targets</p>
+        </div>
 
         <!-- Dashboard Top Row: Stats & Aggregates -->
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
             
             <!-- Intro/Methodology Card -->
-            <div class="md:col-span-4 bg-white p-6 rounded-xl shadow-sm border border-stone-200 flex flex-col justify-center">
-                <h3 class="text-lg font-bold text-slate-800 mb-3">Analysis Methodology</h3>
-                <p class="text-sm text-stone-600 mb-4">
+            <div class="md:col-span-4 bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-center">
+                <h3 class="text-lg font-bold text-slate-800 mb-3"><i class="fa-solid fa-magnifying-glass-chart text-dellBlue mr-2"></i>Analysis Methodology</h3>
+                <p class="text-sm text-slate-600 mb-4">
                     Since concrete "Transformation Plans" are not public for every state, this model uses the <strong>Primary Grantee Status</strong> of the State Office of Rural Health (SORH) as the predictor.
                 </p>
                 <div class="space-y-3">
                     <div class="flex items-start">
-                        <div class="w-2 h-2 rounded-full bg-teal-600 mt-1.5 mr-2"></div>
-                        <p class="text-xs text-stone-500"><strong>State DOH (84%):</strong> Funds managed by Health Dept. High probability of sub-grants or centralized procurement.</p>
+                        <div class="w-3 h-3 rounded-full bg-teal-600 mt-1 mr-3 shadow-sm"></div>
+                        <p class="text-xs text-slate-600 leading-tight"><strong>State DOH (84%):</strong> Funds managed by Health Dept. High probability of sub-grants or centralized procurement.</p>
                     </div>
                     <div class="flex items-start">
-                        <div class="w-2 h-2 rounded-full bg-indigo-500 mt-1.5 mr-2"></div>
-                        <p class="text-xs text-stone-500"><strong>University (16%):</strong> Funds managed by Academic Centers. Focus on education, data, and technical services.</p>
+                        <div class="w-3 h-3 rounded-full bg-indigo-500 mt-1 mr-3 shadow-sm"></div>
+                        <p class="text-xs text-slate-600 leading-tight"><strong>University (16%):</strong> Funds managed by Academic Centers. Focus on education, data, and technical services.</p>
                     </div>
                 </div>
             </div>
 
             <!-- Viz 1: Entity Distribution -->
-            <div class="md:col-span-4 bg-white p-6 rounded-xl shadow-sm border border-stone-200">
-                <h3 class="text-sm font-semibold text-stone-500 uppercase tracking-wide mb-4">Primary Recipient Entities</h3>
+            <div class="md:col-span-4 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-4 text-center">Primary Recipient Entities</h3>
                 <div class="chart-container">
                     <canvas id="entityChart"></canvas>
                 </div>
             </div>
 
             <!-- Viz 2: Procurement Insight -->
-            <div class="md:col-span-4 bg-white p-6 rounded-xl shadow-sm border border-stone-200">
-                <h3 class="text-sm font-semibold text-stone-500 uppercase tracking-wide mb-4">Projected Tech Investment Focus</h3>
+            <div class="md:col-span-4 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-4 text-center">Projected Tech Investment Focus</h3>
                 <div class="chart-container">
                     <canvas id="complexityChart"></canvas>
                 </div>
             </div>
         </div>
 
-        <!-- Main Interaction Area: Grid + Details -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- ROW 1: Interactive Map & Detail Panel -->
+        <section class="w-full">
+            <div class="flex items-center justify-between mb-4 mt-2">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-map-location-dot text-dellBlue text-xl"></i>
+                    <h2 class="text-2xl font-bold text-slate-800">Interactive Funding Map</h2>
+                </div>
+                <div class="flex gap-2">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800"><i class="fa-solid fa-circle text-[8px] mr-1 animate-pulse"></i> Live Data</span>
+                </div>
+            </div>
             
-            <!-- Left Column: The State Grid (Navigation) -->
-            <div class="lg:col-span-2">
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 h-full">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-xl font-bold text-slate-800">State Distribution Map</h2>
-                    </div>
-                    
-                    <!-- The Interactive Map Container -->
-                    <div id="plotlyMap"></div>
-                    
-                    <div class="mt-4 text-xs text-stone-400 text-right">
-                        * Click a state to view funding details
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <!-- Left Column: The State Map -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white p-2 rounded-xl shadow-sm border border-slate-200 h-full relative">
+                        <div id="plotlyMap"></div>
+                        <div class="absolute bottom-4 right-6 text-xs text-slate-400 font-medium bg-white/80 px-2 py-1 rounded">
+                            <i class="fa-solid fa-hand-pointer mr-1"></i> Click a state to view funding details
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Right Column: Detail Inspector -->
-            <div class="lg:col-span-1">
-                <div id="detailPanel" class="bg-white p-0 rounded-xl shadow-lg border border-teal-100 h-full sticky top-6 overflow-hidden flex flex-col">
-                    
-                    <!-- Default Empty State -->
-                    <div id="emptyState" class="p-8 text-center h-full flex flex-col justify-center items-center text-stone-400">
-                        <svg class="w-16 h-16 mb-4 text-stone-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0121 18.382V7.618a1 1 0 01-1.447-.894L15 7m0 13V7m0 0L9.5 3.5"></path></svg>
-                        <p class="text-lg font-medium">Select a State</p>
-                        <p class="text-sm">Click on any state in the grid to analyze its funding distribution route.</p>
-                    </div>
+                <!-- Right Column: Detail Inspector -->
+                <div class="lg:col-span-1">
+                    <div id="detailPanel" class="bg-white p-0 rounded-xl shadow-md border border-slate-200 h-full overflow-hidden flex flex-col">
+                        
+                        <!-- Default Empty State -->
+                        <div id="emptyState" class="p-8 text-center h-full flex flex-col justify-center items-center text-slate-400 bg-slate-50/50">
+                            <div class="w-16 h-16 bg-slate-100 text-slate-300 rounded-full flex items-center justify-center mb-4">
+                                <i class="fa-solid fa-map text-2xl"></i>
+                            </div>
+                            <p class="text-lg font-bold text-slate-600 mb-1">Select a State</p>
+                            <p class="text-sm">Click on any state on the map to analyze its funding distribution route and Dell strategy.</p>
+                        </div>
 
-                    <!-- Active Content (Hidden by default) -->
-                    <div id="activeContent" class="hidden flex flex-col h-full">
-                        <div class="bg-teal-900 text-white p-6">
-                            <div class="flex justify-between items-start">
+                        <!-- Active Content (Hidden by default) -->
+                        <div id="activeContent" class="hidden flex flex-col h-full">
+                            <!-- Header Area -->
+                            <div class="bg-slate-800 text-white p-6 relative overflow-hidden">
+                                <div class="absolute -right-4 -top-4 opacity-10">
+                                    <i class="fa-solid fa-building-flag text-9xl"></i>
+                                </div>
+                                <div class="relative z-10 flex justify-between items-start">
+                                    <div>
+                                        <h2 id="detailName" class="text-3xl font-bold mb-1">State Name</h2>
+                                        <div class="flex flex-wrap gap-2 mt-2">
+                                            <span id="detailType" class="inline-block bg-slate-700 text-slate-100 text-xs px-2.5 py-1 rounded border border-slate-600 font-medium shadow-sm">Recipient Type</span>
+                                            <span id="detailTech" class="inline-block bg-indigo-500/20 text-indigo-100 text-xs px-2.5 py-1 rounded border border-indigo-500/30 font-medium shadow-sm">Tech Focus</span>
+                                        </div>
+                                    </div>
+                                    <span id="detailAbbr" class="text-4xl font-black text-slate-600 opacity-50">ST</span>
+                                </div>
+                            </div>
+
+                            <div class="p-6 flex-grow flex flex-col space-y-6 custom-scroll overflow-y-auto">
+                                
+                                <!-- Primary Route Section -->
                                 <div>
-                                    <h2 id="detailName" class="text-3xl font-bold">State Name</h2>
-                                    <span id="detailType" class="inline-block mt-2 bg-teal-800 text-teal-100 text-xs px-2 py-1 rounded border border-teal-700 mr-2">Recipient Type</span>
-                                    <span id="detailTech" class="inline-block mt-2 bg-indigo-800 text-indigo-100 text-xs px-2 py-1 rounded border border-indigo-700">Tech Focus</span>
+                                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Likely Funding Route</h4>
+                                    <p id="detailRoute" class="text-slate-700 text-sm leading-relaxed border-l-4 border-dellBlue pl-4 bg-slate-50 py-3 pr-3 rounded-r-md">
+                                        Route description goes here.
+                                    </p>
                                 </div>
-                                <span id="detailAbbr" class="text-4xl font-bold text-teal-800 opacity-50">ST</span>
-                            </div>
-                        </div>
 
-                        <div class="p-6 flex-grow flex flex-col space-y-6">
-                            
-                            <!-- Primary Route Section -->
-                            <div>
-                                <h4 class="text-xs font-bold text-stone-400 uppercase tracking-wider mb-2">Likely Funding Route</h4>
-                                <p id="detailRoute" class="text-slate-800 text-sm leading-6 border-l-4 border-teal-500 pl-4 bg-stone-50 py-2">
-                                    Route description goes here.
-                                </p>
-                            </div>
-
-                            <!-- Confidence Meter -->
-                            <div>
-                                <div class="flex justify-between items-end mb-1">
-                                    <h4 class="text-xs font-bold text-stone-400 uppercase tracking-wider">Analysis Basis</h4>
-                                    <span id="detailConfidence" class="text-xs font-bold text-amber-600">Derived Context</span>
+                                <!-- Confidence Meter -->
+                                <div class="bg-white p-4 rounded-lg border border-slate-100 shadow-sm">
+                                    <div class="flex justify-between items-end mb-2">
+                                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Analysis Basis</h4>
+                                        <span id="detailConfidence" class="text-xs font-bold text-amber-600 px-2 py-0.5 bg-amber-50 rounded-full">Derived Context</span>
+                                    </div>
+                                    <div class="w-full bg-slate-100 rounded-full h-2">
+                                        <div id="confidenceBar" class="bg-amber-500 h-2 rounded-full transition-all duration-500" style="width: 50%"></div>
+                                    </div>
+                                    <p id="confidenceText" class="text-xs text-slate-500 mt-2 italic">Based on historical structure.</p>
                                 </div>
-                                <div class="w-full bg-stone-200 rounded-full h-1.5">
-                                    <div id="confidenceBar" class="bg-amber-500 h-1.5 rounded-full" style="width: 50%"></div>
+
+                                <!-- Dell/Procurement Context -->
+                                <div class="bg-dellLight/50 p-5 rounded-lg border border-dellBlue/20 mt-auto shadow-sm">
+                                    <h4 class="text-xs font-bold text-dellDark uppercase tracking-wider mb-2 flex items-center">
+                                        <i class="fa-solid fa-bullseye mr-2 text-dellBlue"></i> Dell Strategic Insight
+                                    </h4>
+                                    <p id="detailProcurement" class="text-slate-800 text-sm font-medium leading-relaxed">
+                                        Procurement insight text.
+                                    </p>
                                 </div>
-                                <p id="confidenceText" class="text-xs text-stone-500 mt-1">Based on historical structure.</p>
-                            </div>
 
-                            <!-- Dell/Procurement Context -->
-                            <div class="bg-indigo-50 p-4 rounded-lg border border-indigo-100 mt-auto">
-                                <h4 class="text-xs font-bold text-indigo-800 uppercase tracking-wider mb-2 flex items-center">
-                                    <span class="mr-2">💡</span> Strategic Insight
-                                </h4>
-                                <p id="detailProcurement" class="text-indigo-900 text-sm">
-                                    Procurement insight text.
-                                </p>
                             </div>
-
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        
-    </div>
+        </section>
+
+        <!-- ROW 2: Distribution Archetypes -->
+        <section class="w-full">
+            <div class="flex items-center gap-2 mb-6 mt-4">
+                <i class="fa-solid fa-network-wired text-dellBlue text-xl"></i>
+                <h2 class="text-2xl font-bold text-slate-800">Distribution Archetypes</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                
+                <div class="glass-card rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border-l-4 border-l-blue-500">
+                    <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600 mb-4">
+                        <i class="fa-solid fa-building-columns text-xl"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2 text-slate-800">Centralized Command</h3>
+                    <p class="text-sm text-slate-600 mb-4 h-16">The State Department of Health retains funds and issues large-scale RFPs for statewide systems.</p>
+                    <div class="bg-slate-50 rounded p-3 text-sm border border-slate-100">
+                        <span class="font-bold text-slate-700 block mb-1">Dell Strategy:</span> 
+                        Sell enterprise stacks directly to the State CIO/CTO.
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border-l-4 border-l-emerald-500">
+                    <div class="w-12 h-12 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600 mb-4">
+                        <i class="fa-solid fa-diagram-project text-xl"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2 text-slate-800">Regional Coalition</h3>
+                    <p class="text-sm text-slate-600 mb-4 h-16">The State divides funds among regional non-profits, CINs, or hospital collaboratives.</p>
+                    <div class="bg-slate-50 rounded p-3 text-sm border border-slate-100">
+                        <span class="font-bold text-slate-700 block mb-1">Dell Strategy:</span> 
+                        Align with and sell to the lead agency of the regional hub.
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border-l-4 border-l-amber-500">
+                    <div class="w-12 h-12 rounded-lg bg-amber-100 flex items-center justify-center text-amber-600 mb-4">
+                        <i class="fa-solid fa-hand-holding-dollar text-xl"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2 text-slate-800">Competitive Sub-Grant</h3>
+                    <p class="text-sm text-slate-600 mb-4 h-16">The State acts as a pass-through entity, managing a portal for hundreds of small clinic grants.</p>
+                    <div class="bg-slate-50 rounded p-3 text-sm border border-slate-100">
+                        <span class="font-bold text-slate-700 block mb-1">Dell Strategy:</span> 
+                        Execute a high-velocity, channel-driven sales approach.
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border-l-4 border-l-purple-500">
+                    <div class="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center text-purple-600 mb-4">
+                        <i class="fa-solid fa-campground text-xl"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2 text-slate-800">Tribal Sovereignty Shift</h3>
+                    <p class="text-sm text-slate-600 mb-4 h-16">Bypassing state bureaucracy in favor of direct, massive allocations to Tribal Nations.</p>
+                    <div class="bg-slate-50 rounded p-3 text-sm border border-slate-100">
+                        <span class="font-bold text-slate-700 block mb-1">Dell Strategy:</span> 
+                        Target highly-capitalized Tribal Health Organizations (THOs).
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ROW 3: Top 10 List Section -->
+        <section class="w-full pb-12">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-6 mt-4 gap-4">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-crosshairs text-dellBlue text-xl"></i>
+                    <h2 class="text-2xl font-bold text-slate-800">Top 10 State Targets</h2>
+                </div>
+                <div class="flex gap-2">
+                    <span class="text-sm text-slate-500 italic bg-white border border-slate-200 shadow-sm px-3 py-1 rounded-full"><i class="fa-solid fa-arrow-down-short-wide mr-1"></i> Ranked by Dell Enterprise Infra Potential</span>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="overflow-x-auto table-container">
+                    <table class="w-full text-left border-collapse min-w-[900px]">
+                        <thead>
+                            <tr class="bg-slate-100/50 text-slate-600 border-b border-slate-200 text-sm uppercase tracking-wider">
+                                <th class="py-4 px-6 font-bold">Rank & State</th>
+                                <th class="py-4 px-6 font-bold">FY26 Award</th>
+                                <th class="py-4 px-6 font-bold">Primary Archetype</th>
+                                <th class="py-4 px-6 font-bold w-1/2">Dell Strategic Angle & Required Pivot</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <!-- Texas -->
+                            <tr class="hover:bg-slate-50 transition-colors group">
+                                <td class="py-5 px-6">
+                                    <div class="flex items-center gap-3">
+                                        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-dellBlue text-white font-bold shadow-sm">1</span>
+                                        <span class="font-bold text-slate-800 text-lg">Texas</span>
+                                    </div>
+                                </td>
+                                <td class="py-5 px-6 font-bold text-emerald-600 text-lg">$281.3M</td>
+                                <td class="py-5 px-6">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200 shadow-sm">
+                                        Decentralized / Subcontractor
+                                    </span>
+                                </td>
+                                <td class="py-5 px-6 text-sm text-slate-700 leading-relaxed">
+                                    <strong class="text-red-600"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Pivot Required:</strong> 80 rural hospital districts receiving direct endpoint/infra funding. Target CIN/ACO hubs winning massive RFPs for RPM and cyber stacks (not the state CIO).
+                                </td>
+                            </tr>
+                            
+                            <!-- Indiana -->
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="py-4 px-6">
+                                    <div class="flex items-center gap-3">
+                                        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 text-slate-600 font-bold border border-slate-200">2</span>
+                                        <span class="font-bold text-slate-800">Indiana</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-6 font-semibold text-slate-700">$206.9M</td>
+                                <td class="py-4 px-6">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-blue-100 text-blue-800 border border-blue-200 shadow-sm">
+                                        Centralized
+                                    </span>
+                                </td>
+                                <td class="py-4 px-6 text-sm text-slate-600 leading-relaxed">
+                                    Building a centralized Medical Operations Coordination Center (MOCC). Represents a massive centralized IT and logistics contract with a $56.2M budget.
+                                </td>
+                            </tr>
+
+                            <!-- Vermont -->
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="py-4 px-6">
+                                    <div class="flex items-center gap-3">
+                                        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 text-slate-600 font-bold border border-slate-200">3</span>
+                                        <span class="font-bold text-slate-800">Vermont</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-6 font-semibold text-slate-700">$195.0M</td>
+                                <td class="py-4 px-6">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-blue-100 text-blue-800 border border-blue-200 shadow-sm">
+                                        Centralized
+                                    </span>
+                                </td>
+                                <td class="py-4 px-6 text-sm text-slate-600 leading-relaxed">
+                                    "Clinically Integrated Network of Shared Services." Core strategy revolves around centralized hosting for Shared EHRs, HR systems, and AI transcription.
+                                </td>
+                            </tr>
+
+                            <!-- Rhode Island -->
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="py-4 px-6">
+                                    <div class="flex items-center gap-3">
+                                        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 text-slate-600 font-bold border border-slate-200">4</span>
+                                        <span class="font-bold text-slate-800">Rhode Island</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-6 font-semibold text-slate-700">$156.1M</td>
+                                <td class="py-4 px-6">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-blue-100 text-blue-800 border border-blue-200 shadow-sm">
+                                        Centralized
+                                    </span>
+                                </td>
+                                <td class="py-4 px-6 text-sm text-slate-600 leading-relaxed">
+                                    Boutique lab for high-cost interventions. Massive, winner-take-all contract potential for a State-Sponsored EHR and centralized data hub infrastructure.
+                                </td>
+                            </tr>
+
+                            <!-- Maine -->
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="py-4 px-6">
+                                    <div class="flex items-center gap-3">
+                                        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 text-slate-600 font-bold border border-slate-200">5</span>
+                                        <span class="font-bold text-slate-800">Maine</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-6 font-semibold text-slate-700">$190.0M</td>
+                                <td class="py-4 px-6">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-blue-100 text-blue-800 border border-blue-200 shadow-sm">
+                                        Centralized
+                                    </span>
+                                </td>
+                                <td class="py-4 px-6 text-sm text-slate-600 leading-relaxed">
+                                    Explicitly funding a "Rural AI Hub." Premier opportunity for High-Performance Computing (HPC) and AI-as-a-Service architecture.
+                                </td>
+                            </tr>
+
+                            <!-- Alabama -->
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="py-4 px-6">
+                                    <div class="flex items-center gap-3">
+                                        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 text-slate-600 font-bold border border-slate-200">6</span>
+                                        <span class="font-bold text-slate-800">Alabama</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-6 font-semibold text-slate-700">$203.4M</td>
+                                <td class="py-4 px-6">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 shadow-sm">
+                                        Regional Coalition
+                                    </span>
+                                </td>
+                                <td class="py-4 px-6 text-sm text-slate-600 leading-relaxed">
+                                    Funding centralized "Regional shared-service hubs" to manage EHR and cybersecurity. Massive play for Managed Service Providers (MSPs).
+                                </td>
+                            </tr>
+
+                            <!-- Arkansas -->
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="py-4 px-6">
+                                    <div class="flex items-center gap-3">
+                                        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 text-slate-600 font-bold border border-slate-200">7</span>
+                                        <span class="font-bold text-slate-800">Arkansas</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-6 font-semibold text-slate-700">$208.7M</td>
+                                <td class="py-4 px-6">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-blue-100 text-blue-800 border border-blue-200 shadow-sm">
+                                        Centralized
+                                    </span>
+                                </td>
+                                <td class="py-4 px-6 text-sm text-slate-600 leading-relaxed">
+                                    Enterprise-grade data infrastructure play. Procuring centrally for a statewide telehealth platform and data lake known as "ROADMAP."
+                                </td>
+                            </tr>
+
+                            <!-- Louisiana -->
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="py-4 px-6">
+                                    <div class="flex items-center gap-3">
+                                        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 text-slate-600 font-bold border border-slate-200">8</span>
+                                        <span class="font-bold text-slate-800">Louisiana</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-6 font-semibold text-slate-700">$208.3M</td>
+                                <td class="py-4 px-6">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200 shadow-sm">
+                                        Competitive Sub-Grant
+                                    </span>
+                                </td>
+                                <td class="py-4 px-6 text-sm text-slate-600 leading-relaxed">
+                                    "Rural Tech Catalyst Fund" acts as a direct voucher program for rural hospitals to buy IT endpoint products. High-velocity channel sales required.
+                                </td>
+                            </tr>
+
+                            <!-- California -->
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="py-4 px-6">
+                                    <div class="flex items-center gap-3">
+                                        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 text-slate-600 font-bold border border-slate-200">9</span>
+                                        <span class="font-bold text-slate-800">California</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-6 font-semibold text-slate-700">$233.6M</td>
+                                <td class="py-4 px-6">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 shadow-sm">
+                                        Regional Coalition
+                                    </span>
+                                </td>
+                                <td class="py-4 px-6 text-sm text-slate-600 leading-relaxed">
+                                    Funding a "Rural Technical Assistance Center" and Hub-and-Spoke networks for HIE/cyber. Requires complex databases for workforce mapping.
+                                </td>
+                            </tr>
+
+                            <!-- Florida -->
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="py-4 px-6">
+                                    <div class="flex items-center gap-3">
+                                        <span class="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 text-slate-600 font-bold border border-slate-200">10</span>
+                                        <span class="font-bold text-slate-800">Florida</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-6 font-semibold text-slate-700">$209.9M</td>
+                                <td class="py-4 px-6">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 shadow-sm">
+                                        Regional Coalition
+                                    </span>
+                                </td>
+                                <td class="py-4 px-6 text-sm text-slate-600 leading-relaxed">
+                                    Competitive RFA approach requiring providers to form legal entities. Features $5M direct subsidy for HIE onboarding and connectivity solutions.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
 
     <!-- Application Logic -->
     <script>
@@ -302,10 +591,10 @@
                     z: zValues,
                     text: hoverText,
                     hoverinfo: 'location+text',
-                    showscale: false, // Hide the numerical scale since it's categorical
+                    showscale: false, 
                     colorscale: [
-                        [0, '#0f766e'],    // Teal for 1 (DOH)
-                        [0.5, '#0f766e'], 
+                        [0, '#0076CE'],    // dellBlue for 1 (DOH)
+                        [0.5, '#0076CE'], 
                         [0.5, '#6366f1'],  // Indigo for 2 (University)
                         [1, '#6366f1']
                     ],
@@ -314,7 +603,7 @@
                     marker: {
                         line: {
                             color: '#ffffff',
-                            width: 1
+                            width: 1.5
                         }
                     }
                 };
@@ -359,10 +648,10 @@
                 // Populate New Tech Focus Badge
                 const techBadge = document.getElementById('detailTech');
                 techBadge.innerText = state.techFocus;
-                if(state.techFocus === 'Cybersecurity') techBadge.className = "inline-block mt-2 bg-red-800 text-red-100 text-xs px-2 py-1 rounded border border-red-700";
-                else if(state.techFocus === 'Cloud & Edge') techBadge.className = "inline-block mt-2 bg-blue-800 text-blue-100 text-xs px-2 py-1 rounded border border-blue-700";
-                else if(state.techFocus === 'Telehealth & Endpoints') techBadge.className = "inline-block mt-2 bg-green-800 text-green-100 text-xs px-2 py-1 rounded border border-green-700";
-                else techBadge.className = "inline-block mt-2 bg-purple-800 text-purple-100 text-xs px-2 py-1 rounded border border-purple-700";
+                if(state.techFocus === 'Cybersecurity') techBadge.className = "inline-block bg-red-500/20 text-red-100 text-xs px-2.5 py-1 rounded border border-red-500/30 font-medium shadow-sm";
+                else if(state.techFocus === 'Cloud & Edge') techBadge.className = "inline-block bg-blue-500/20 text-blue-100 text-xs px-2.5 py-1 rounded border border-blue-500/30 font-medium shadow-sm";
+                else if(state.techFocus === 'Telehealth & Endpoints') techBadge.className = "inline-block bg-emerald-500/20 text-emerald-100 text-xs px-2.5 py-1 rounded border border-emerald-500/30 font-medium shadow-sm";
+                else techBadge.className = "inline-block bg-indigo-500/20 text-indigo-100 text-xs px-2.5 py-1 rounded border border-indigo-500/30 font-medium shadow-sm"; // Data & AI
 
                 document.getElementById('detailRoute').innerHTML = state.route;
                 document.getElementById('detailProcurement').innerText = state.insight;
@@ -374,21 +663,21 @@
 
                 if (state.confidence === 'high') {
                     confBar.style.width = '90%';
-                    confBar.className = 'bg-teal-500 h-1.5 rounded-full';
+                    confBar.className = 'bg-emerald-500 h-2 rounded-full transition-all duration-500';
                     confLabel.innerText = "Documented Structure";
-                    confLabel.className = "text-xs font-bold text-teal-600";
+                    confLabel.className = "text-xs font-bold text-emerald-600 px-2 py-0.5 bg-emerald-50 rounded-full border border-emerald-100";
                     confText.innerText = "Based on verified SORH organizational chart.";
                 } else if (state.confidence === 'medium') {
                     confBar.style.width = '60%';
-                    confBar.className = 'bg-amber-500 h-1.5 rounded-full';
+                    confBar.className = 'bg-amber-500 h-2 rounded-full transition-all duration-500';
                     confLabel.innerText = "Inferred Structure";
-                    confLabel.className = "text-xs font-bold text-amber-600";
+                    confLabel.className = "text-xs font-bold text-amber-600 px-2 py-0.5 bg-amber-50 rounded-full border border-amber-100";
                     confText.innerText = "Based on typical funding patterns for this state.";
                 } else {
                     confBar.style.width = '30%';
-                    confBar.className = 'bg-red-400 h-1.5 rounded-full';
+                    confBar.className = 'bg-red-400 h-2 rounded-full transition-all duration-500';
                     confLabel.innerText = "Best Guess";
-                    confLabel.className = "text-xs font-bold text-red-500";
+                    confLabel.className = "text-xs font-bold text-red-500 px-2 py-0.5 bg-red-50 rounded-full border border-red-100";
                     confText.innerText = "Complex shared governance; route unclear.";
                 }
             }
@@ -421,23 +710,25 @@
             new Chart(ctx1, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Health Dept', 'University'],
+                    labels: ['State Health Dept', 'University System'],
                     datasets: [{
                         data: [typeCounts.doh, typeCounts.university],
-                        backgroundColor: ['#0f766e', '#6366f1'], // Teal, Indigo
-                        borderWidth: 0
+                        backgroundColor: ['#0076CE', '#6366f1'], // dellBlue, Indigo
+                        borderWidth: 0,
+                        hoverOffset: 4
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { position: 'right' }
-                    }
+                        legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, padding: 20 } }
+                    },
+                    cutout: '70%'
                 }
             });
 
-            // Chart 2: Projected Tech Investment (Updated for 2026 data)
+            // Chart 2: Projected Tech Investment
             const ctx2 = document.getElementById('complexityChart').getContext('2d');
             new Chart(ctx2, {
                 type: 'bar',
@@ -446,7 +737,7 @@
                     datasets: [{
                         label: 'Number of States',
                         data: [techCounts.edge, techCounts.telehealth, techCounts.data, techCounts.cyber],
-                        backgroundColor: ['#1e40af', '#166534', '#6b21a8', '#991b1b'], // Blue, Green, Purple, Red mapping to badges
+                        backgroundColor: ['#0076CE', '#10b981', '#6366f1', '#ef4444'], // Blue, Green, Indigo, Red
                         borderRadius: 4
                     }]
                 },
@@ -455,7 +746,7 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        x: { beginAtZero: true, grid: { display: false }, ticks: { stepSize: 5 } },
+                        x: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { stepSize: 5 } },
                         y: { grid: { display: false } }
                     },
                     plugins: {
