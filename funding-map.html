@@ -129,6 +129,10 @@
                         <div class="w-3 h-3 rounded-full bg-purple-500 mt-1 mr-3 shadow-sm flex-shrink-0"></div>
                         <p class="text-xs text-slate-600 leading-tight"><strong>Tribal:</strong> Direct allocations; target Tribal Health Orgs.</p>
                     </div>
+                    <div class="flex items-start mt-2 pt-2 border-t border-slate-100">
+                        <span class="text-sm mr-2">🎓</span>
+                        <p class="text-xs text-slate-600 leading-tight"><strong>Higher Ed:</strong> Identifies states allocating material funds to University partnerships or medical schools.</p>
+                    </div>
                 </div>
             </div>
 
@@ -199,6 +203,7 @@
                                         <div class="flex flex-wrap gap-2 mt-2">
                                             <span id="detailArchetype" class="inline-block text-xs px-2.5 py-1 rounded border font-bold shadow-sm">Archetype</span>
                                             <span id="detailTech" class="inline-block bg-slate-700 text-slate-100 text-xs px-2.5 py-1 rounded border border-slate-600 font-medium shadow-sm">Tech Focus</span>
+                                            <span id="detailHigherEd" class="hidden bg-stone-100 text-stone-700 text-xs px-2.5 py-1 rounded border border-stone-300 font-bold shadow-sm"><i class="fa-solid fa-graduation-cap mr-1"></i> Higher Ed Partner</span>
                                         </div>
                                     </div>
                                     <span id="detailAbbr" class="text-4xl font-black text-slate-600 opacity-50">ST</span>
@@ -427,7 +432,10 @@
                                 <td class="py-4 px-6">
                                     <div class="flex items-center gap-3">
                                         <span class="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 text-slate-600 font-bold border border-slate-200">6</span>
-                                        <span class="font-bold text-slate-800">Alabama</span>
+                                        <div class="flex flex-col">
+                                            <span class="font-bold text-slate-800">Alabama</span>
+                                            <span class="text-[10px] font-bold text-stone-500 mt-0.5"><i class="fa-solid fa-graduation-cap text-stone-400"></i> Higher Ed</span>
+                                        </div>
                                     </div>
                                 </td>
                                 <td class="py-4 px-6 font-semibold text-slate-700">$203.4M</td>
@@ -529,23 +537,23 @@
         // --- Data Source: Rural Health Funding Landscape ---
         // Refactored to map states by their Primary Distribution Archetype
         const stateData = [
-            { abbr: "AL", name: "Alabama", archetype: "regional", techFocus: "Cloud & Edge", confidence: "high", route: "Building 'Regional shared-service hubs' to manage EHR and cybersecurity for clusters of independent hospitals.", insight: "Position VxRail and PowerEdge for modernizing legacy on-prem hospital servers via these regional hubs." },
+            { abbr: "AL", name: "Alabama", archetype: "regional", techFocus: "Cloud & Edge", higherEd: true, confidence: "high", route: "Building 'Regional shared-service hubs' to manage EHR and cybersecurity for clusters of independent hospitals. Also funding a new School of Healthcare Sciences.", insight: "Position VxRail and PowerEdge for modernizing legacy on-prem hospital servers via these regional hubs." },
             { abbr: "AK", name: "Alaska", archetype: "tribal", techFocus: "Telehealth & Endpoints", confidence: "high", route: "Heavy reliance on Tribal Health Organizations (THOs) bypassing state bureaucracy. Investments in medical transport and remote monitoring in villages.", insight: "Focus on Latitude Rugged devices and edge gateways for extreme remote connectivity." },
-            { abbr: "AZ", name: "Arizona", archetype: "centralized", techFocus: "Data & AI", confidence: "high", route: "AHCCCS (Medicaid) utilizing Managed Care Organizations to distribute funds centrally for workforce pipelines and data integration.", insight: "Target AI-ready workstations and high-compute servers for university-led population health research." },
+            { abbr: "AZ", name: "Arizona", archetype: "centralized", techFocus: "Data & AI", higherEd: true, confidence: "high", route: "AHCCCS (Medicaid) utilizing Managed Care Organizations to distribute funds centrally for workforce pipelines and data integration via Northern Arizona University.", insight: "Target AI-ready workstations and high-compute servers for university-led population health research." },
             { abbr: "AR", name: "Arkansas", archetype: "centralized", techFocus: "Cybersecurity", confidence: "high", route: "Centralized procurement via Dept of Finance for a statewide telehealth platform or data lake ('ROADMAP').", insight: "Lead with Zero-Trust infrastructure and PowerProtect backup/recovery solutions." },
             { abbr: "CA", name: "California", archetype: "regional", techFocus: "Data & AI", confidence: "high", route: "Funding a 'Rural Technical Assistance Center' and Hub-and-Spoke networks for HIE/cyber, anchored by larger hospitals.", insight: "Strong focus on statewide data reporting; position APEX storage and data lake solutions." },
             { abbr: "CO", name: "Colorado", archetype: "subgrant", techFocus: "Telehealth & Endpoints", confidence: "high", route: "Providing capital grants to providers joining the Hospital Transformation Program (HTP) to upgrade endpoints and behavioral health wings.", insight: "Partner with non-profits to supply standardized OptiPlex and Latitude telehealth carts." },
             { abbr: "CT", name: "Connecticut", archetype: "subgrant", techFocus: "Cybersecurity", confidence: "medium", route: "Targeted grants focusing on 'treatment barriers' and patient-centered care. High probability of sub-grants.", insight: "Focus on endpoint security and compliance solutions for FQHCs." },
-            { abbr: "DE", name: "Delaware", archetype: "centralized", techFocus: "Data & AI", confidence: "high", route: "Massive capital investments from the state level for 'Hope Centers' and centralized HIE Expansion.", insight: "Position analytics dashboards and backend storage for state-level health planning." },
+            { abbr: "DE", name: "Delaware", archetype: "centralized", techFocus: "Data & AI", higherEd: true, confidence: "high", route: "Massive capital investments from the state level for 'Hope Centers' and centralized HIE Expansion, alongside massive allocations to University medical programs.", insight: "Position analytics dashboards and backend storage for state-level health planning." },
             { abbr: "FL", name: "Florida", archetype: "regional", techFocus: "Cloud & Edge", confidence: "high", route: "Competitive RFA approach requiring providers to form legal entities and regional partnerships to apply for tech funds.", insight: "Target individual County Health Departments with standardized edge server deployments." },
             { abbr: "GA", name: "Georgia", archetype: "regional", techFocus: "Cybersecurity", confidence: "high", route: "DCH manages the GREAT Health program, funding initiatives like Treat-vs-Transport telehealth pilots for regional EMS systems.", insight: "Urgent need for immutable backups, endpoint detection (MDR), and ransomware recovery (PowerProtect)." },
-            { abbr: "HI", name: "Hawaii", archetype: "centralized", techFocus: "Telehealth & Endpoints", confidence: "medium", route: "State Executive Office distributing funds directly for air ambulance/inter-island transport subsidies and telemedicine.", insight: "Logistics, mobile connectivity, and rugged edge endpoints for inter-island care." },
+            { abbr: "HI", name: "Hawaii", archetype: "centralized", techFocus: "Telehealth & Endpoints", higherEd: true, confidence: "medium", route: "State Executive Office distributing funds directly for air ambulance/inter-island transport subsidies and telemedicine, funding JABSOM medical school.", insight: "Logistics, mobile connectivity, and rugged edge endpoints for inter-island care." },
             { abbr: "ID", name: "Idaho", archetype: "subgrant", techFocus: "Telehealth & Endpoints", confidence: "high", route: "Pursuing data-driven, community-targeted efforts via direct grants to hospitals for tele-stroke and tele-psych.", insight: "Bundle telehealth hardware solutions with Hospital Association training programs." },
             { abbr: "IL", name: "Illinois", archetype: "subgrant", techFocus: "Cloud & Edge", confidence: "high", route: "HFS is using funds to right-size care delivery via direct transformation grants to rural hospitals to convert service lines.", insight: "Direct sales to CAHs using state grant money for server and storage refreshes." },
             { abbr: "IN", name: "Indiana", archetype: "centralized", techFocus: "Telehealth & Endpoints", confidence: "high", route: "Building a centralized Medical Operations Coordination Center (MOCC). Retaining significant funds at state level for tech.", insight: "Engage IRHA to deploy standardized remote-care endpoint packages." },
             { abbr: "IA", name: "Iowa", archetype: "centralized", techFocus: "Cybersecurity", confidence: "high", route: "Focus on connecting local care to specialized centers and centrally subsidizing rural connections to the state HIE.", insight: "Focus on network security and secure remote access for distributed clinics." },
             { abbr: "KS", name: "Kansas", archetype: "regional", techFocus: "Cloud & Edge", confidence: "high", route: "KDHE coordinates with the 'Rural Health Alliance', heavily pushing rural providers into Accountable Care Organizations (ACOs).", insight: "Local Health Department infrastructure modernization (servers/switches)." },
-            { abbr: "KY", name: "Kentucky", archetype: "regional", techFocus: "Data & AI", confidence: "high", route: "Establishing public-private partnerships to build 'Rural Community Hubs' for chronic care innovation.", insight: "Academic computing environments; position high-performance computing (HPC) nodes." },
+            { abbr: "KY", name: "Kentucky", archetype: "regional", techFocus: "Data & AI", higherEd: true, confidence: "high", route: "Establishing public-private partnerships to build 'Rural Community Hubs' for chronic care innovation. Strong university research ties.", insight: "Academic computing environments; position high-performance computing (HPC) nodes." },
             { abbr: "LA", name: "Louisiana", archetype: "subgrant", techFocus: "Cloud & Edge", confidence: "high", route: "Establishing a 'Rural Tech Catalyst Fund' specifically acting as a voucher program for rural providers to purchase technology.", insight: "FQHC network infrastructure upgrades and centralized data management." },
             { abbr: "ME", name: "Maine", archetype: "centralized", techFocus: "Data & AI", confidence: "high", route: "Explicitly planning a 'Rural AI Hub' centralized at the state or a major academic center to drive analytics.", insight: "Data interoperability solutions between rural clinics and the state CDC." },
             { abbr: "MD", name: "Maryland", archetype: "centralized", techFocus: "Data & AI", confidence: "high", route: "State-managed centralized approach heavily utilizing the All-Payer model to dictate rural stability.", insight: "High-level consulting, value-based care analytics, and massive data storage." },
@@ -554,18 +562,18 @@
             { abbr: "MN", name: "Minnesota", archetype: "subgrant", techFocus: "Cloud & Edge", confidence: "high", route: "MDH is running a 'Collaboration for Financial Viability' program consisting of direct grants to providers.", insight: "Hospitals will have competitive grant money; target core infrastructure overhauls." },
             { abbr: "MS", name: "Mississippi", archetype: "subgrant", techFocus: "Cloud & Edge", confidence: "high", route: "Direct grants for telehealth and health IT upgrades under 'Health Technology Advancement and Modernization'.", insight: "Cost-reduction technologies; HCI (VxRail) to reduce IT headcount needs." },
             { abbr: "MO", name: "Missouri", archetype: "regional", techFocus: "Cloud & Edge", confidence: "high", route: "Activating local community hubs. Funds flow to local lead agencies (hospitals or CAP agencies) to coordinate.", insight: "State-wide shared services platforms and hybrid cloud implementations." },
-            { abbr: "MT", name: "Montana", archetype: "subgrant", techFocus: "Telehealth & Endpoints", confidence: "high", route: "Funding critical facility repairs and modernization across rural facilities via direct capital injections.", insight: "Simulation lab tech, VR training endpoints, and high-res medical displays." },
+            { abbr: "MT", name: "Montana", archetype: "subgrant", techFocus: "Telehealth & Endpoints", higherEd: true, confidence: "high", route: "Funding critical facility repairs and modernization across rural facilities alongside apprenticeships via local colleges.", insight: "Simulation lab tech, VR training endpoints, and high-res medical displays." },
             { abbr: "NE", name: "Nebraska", archetype: "subgrant", techFocus: "Cloud & Edge", confidence: "high", route: "Direct wellness and hospital sustainability grants, engaging the Nebraska Hospital Association.", insight: "Hospital operational efficiency tools; hyperconverged infrastructure." },
-            { abbr: "NV", name: "Nevada", archetype: "centralized", techFocus: "Telehealth & Endpoints", confidence: "high", route: "State-managed allocation largely flowing to NSHE institutions for workforce and centralized telehealth extension.", insight: "Telehealth backbone infrastructure and remote edge computing devices." },
+            { abbr: "NV", name: "Nevada", archetype: "centralized", techFocus: "Telehealth & Endpoints", higherEd: true, confidence: "high", route: "State-managed allocation largely flowing to NSHE institutions for workforce and centralized telehealth extension.", insight: "Telehealth backbone infrastructure and remote edge computing devices." },
             { abbr: "NH", name: "New Hampshire", archetype: "centralized", techFocus: "Cybersecurity", confidence: "high", route: "State DHHS scaling the CCBHC model statewide, effectively directing the IT upgrades from a central level.", insight: "Securing sensitive behavioral health data; endpoint encryption." },
             { abbr: "NJ", name: "New Jersey", archetype: "subgrant", techFocus: "Data & AI", confidence: "high", route: "Concentrating funds via a Request for Applications (RFA) distributed directly to providers and tribal organizations.", insight: "Target specific health networks with population health analytics hardware." },
             { abbr: "NM", name: "New Mexico", archetype: "tribal", techFocus: "Telehealth & Endpoints", confidence: "medium", route: "Significant portion of funds acting as pass-throughs to Indian Health Service (IHS) and 638 facilities.", insight: "Tribal health clinic modernization; reliable endpoints and networking." },
-            { abbr: "NY", name: "New York", archetype: "centralized", techFocus: "Data & AI", confidence: "high", route: "DOH centrally dictating 'Rural Roots' pipeline and explicit state-managed cybersecurity strengthening initiatives.", insight: "Network-level analytics and state-aggregated data center solutions." },
+            { abbr: "NY", name: "New York", archetype: "centralized", techFocus: "Data & AI", higherEd: true, confidence: "high", route: "DOH centrally dictating 'Rural Roots' pipeline via SUNY schools, alongside explicit state-managed cybersecurity strengthening.", insight: "Network-level analytics and state-aggregated data center solutions." },
             { abbr: "NC", name: "North Carolina", archetype: "regional", techFocus: "Cloud & Edge", confidence: "high", route: "Launching locally governed 'NC ROOTS' Hubs. Regional bodies connecting medical and mental health supports.", insight: "Safety net provider tech refreshes; edge servers for remote clinics." },
-            { abbr: "ND", name: "North Dakota", archetype: "centralized", techFocus: "Data & AI", confidence: "high", route: "Massive centralized 'Connect Tech' play managed alongside the Bank of North Dakota for unified EHR/payer hubs.", insight: "Research data tools; scalable unstructured data storage (PowerScale)." },
+            { abbr: "ND", name: "North Dakota", archetype: "centralized", techFocus: "Data & AI", higherEd: true, confidence: "high", route: "Massive centralized 'Connect Tech' play managed alongside the Bank of North Dakota for unified EHR/payer hubs, supported by UND.", insight: "Research data tools; scalable unstructured data storage (PowerScale)." },
             { abbr: "OH", name: "Ohio", archetype: "regional", techFocus: "Cybersecurity", confidence: "high", route: "Tiered funding for regional alliances (Clinically Integrated Networks) to coordinate care and shared services.", insight: "Bundle grant applications with standardized cybersecurity audits/hardware." },
-            { abbr: "OK", name: "Oklahoma", archetype: "subgrant", techFocus: "Telehealth & Endpoints", confidence: "high", route: "Pivoted to offering a direct microgrants program ($50k-$250k) for one-time equipment purchases by clinics.", insight: "Medical education tech and mobile clinic endpoints." },
-            { abbr: "OR", name: "Oregon", archetype: "tribal", techFocus: "Data & AI", confidence: "high", route: "Heavy focus on long-term shared infrastructure and explicit Tribal sovereignty distributions.", insight: "Workforce management data systems; university data center expansion." },
+            { abbr: "OK", name: "Oklahoma", archetype: "subgrant", techFocus: "Telehealth & Endpoints", higherEd: true, confidence: "high", route: "Pivoted to offering a direct microgrants program ($50k-$250k) for one-time equipment purchases by clinics, alongside OSU medical integration.", insight: "Medical education tech and mobile clinic endpoints." },
+            { abbr: "OR", name: "Oregon", archetype: "tribal", techFocus: "Data & AI", higherEd: true, confidence: "high", route: "Heavy focus on long-term shared infrastructure and explicit Tribal sovereignty distributions. Provider tracking via OHSU.", insight: "Workforce management data systems; university data center expansion." },
             { abbr: "PA", name: "Pennsylvania", archetype: "regional", techFocus: "Cybersecurity", confidence: "high", route: "Establishing 'Rural Care Collaboratives' (RCCs). Regional bodies dictating local tech solutions.", insight: "Protecting academic-to-rural-hospital data pipelines." },
             { abbr: "RI", name: "Rhode Island", archetype: "centralized", techFocus: "Data & AI", confidence: "high", route: "Boutique pilot lab exploring a 'State-Sponsored EHR' and centralized Rural Health Data Hub.", insight: "Health equity mapping requires heavy data analysis and visualization workstations." },
             { abbr: "SC", name: "South Carolina", archetype: "subgrant", techFocus: "Cloud & Edge", confidence: "high", route: "Implementing a 'Tech Catalyst Fund' providing competitive seed funding directly to rural health startups/clinics.", insight: "Direct relationship with SCORH to build a centralized managed cloud for hospitals." },
@@ -575,9 +583,9 @@
             { abbr: "UT", name: "Utah", archetype: "centralized", techFocus: "Telehealth & Endpoints", confidence: "high", route: "Implementing state-managed PATH program to strengthen rural food infrastructure and active transportation.", insight: "Telehealth focus; remote patient monitoring gateways." },
             { abbr: "VT", name: "Vermont", archetype: "centralized", techFocus: "Cybersecurity", confidence: "high", route: "Building a 'Clinically Integrated Network of Shared Services' featuring centralized procurement for a Shared EHR.", insight: "Securing primary care data exchanges across the state network." },
             { abbr: "VA", name: "Virginia", archetype: "tribal", techFocus: "Data & AI", confidence: "medium", route: "DMAS prioritizing competitive grant programs specifically for federally recognized tribes and broadband extension.", insight: "Social Determinants of Health (SDOH) massive data processing infrastructure." },
-            { abbr: "WA", name: "Washington", archetype: "tribal", techFocus: "Data & AI", confidence: "high", route: "Mix of direct awards with massive explicit $20M/year tribal set-asides bypassing standard state grant flow.", insight: "Value-based care analytics requiring high-performance computing clusters." },
+            { abbr: "WA", name: "Washington", archetype: "tribal", techFocus: "Data & AI", higherEd: true, confidence: "high", route: "Mix of direct awards with massive explicit $20M/year tribal set-asides. Heavy investments in UW and WSU medical schools.", insight: "Value-based care analytics requiring high-performance computing clusters." },
             { abbr: "WV", name: "West Virginia", archetype: "subgrant", techFocus: "Cloud & Edge", confidence: "high", route: "Operating 'Smart Care Catalyst' grants, passing funds down for tech-enabled innovation at the clinic level.", insight: "Distressed asset turnaround; replace aging servers with efficient HCI solutions." },
-            { abbr: "WI", name: "Wisconsin", archetype: "regional", techFocus: "Data & AI", confidence: "high", route: "$230M total distributed to regional care coordination networks to expand capacity.", insight: "Hybrid Academic/Operational tools; university-managed cloud services." },
+            { abbr: "WI", name: "Wisconsin", archetype: "regional", techFocus: "Data & AI", higherEd: true, confidence: "high", route: "$230M total distributed to regional care coordination networks. Operational support via UW.", insight: "Hybrid Academic/Operational tools; university-managed cloud services." },
             { abbr: "WY", name: "Wyoming", archetype: "centralized", techFocus: "Data & AI", confidence: "high", route: "Creating a centralized state trust structure prioritizing CAHs and dictating EMS regionalization from the top down.", insight: "Statewide data lakes and secure edge-to-core data pipelines." }
         ];
 
@@ -595,7 +603,9 @@
                     if(s.archetype === 'regional') archName = "Regional Coalition";
                     if(s.archetype === 'subgrant') archName = "Competitive Sub-Grant";
                     if(s.archetype === 'tribal') archName = "Tribal Sovereignty";
-                    return `<b>${s.name}</b><br>${archName}`;
+                    
+                    const edMarker = s.higherEd ? "<br>🎓 Higher Ed Funding" : "";
+                    return `<b>${s.name}</b><br>${archName}${edMarker}`;
                 });
                 
                 const zValues = stateData.map(s => {
@@ -634,6 +644,24 @@
                     }
                 };
 
+                // Create a secondary trace to overlay the Higher Ed icons
+                const higherEdStates = stateData.filter(s => s.higherEd);
+                const edLocations = higherEdStates.map(s => s.abbr);
+                const edIcons = higherEdStates.map(() => '🎓');
+
+                const iconTrace = {
+                    type: 'scattergeo',
+                    locationmode: 'USA-states',
+                    locations: edLocations,
+                    mode: 'text',
+                    text: edIcons,
+                    textfont: {
+                        size: 16
+                    },
+                    hoverinfo: 'skip', // Let the underlying state handle the hover card
+                    showlegend: false
+                };
+
                 const layout = {
                     geo: {
                         scope: 'usa',
@@ -647,7 +675,7 @@
                     dragmode: false // Disable panning/zooming
                 };
 
-                Plotly.newPlot('plotlyMap', [trace], layout, {responsive: true, displayModeBar: false});
+                Plotly.newPlot('plotlyMap', [trace, iconTrace], layout, {responsive: true, displayModeBar: false});
 
                 // Attach click listener to the map
                 document.getElementById('plotlyMap').on('plotly_click', function(data){
@@ -693,6 +721,16 @@
                 else if(state.techFocus === 'Cloud & Edge') techBadge.className = "inline-block bg-sky-500/20 text-sky-100 text-xs px-2.5 py-1 rounded border border-sky-500/30 font-medium shadow-sm";
                 else if(state.techFocus === 'Telehealth & Endpoints') techBadge.className = "inline-block bg-teal-500/20 text-teal-100 text-xs px-2.5 py-1 rounded border border-teal-500/30 font-medium shadow-sm";
                 else techBadge.className = "inline-block bg-indigo-500/20 text-indigo-100 text-xs px-2.5 py-1 rounded border border-indigo-500/30 font-medium shadow-sm"; // Data & AI
+
+                // Higher Ed Badge
+                const edBadge = document.getElementById('detailHigherEd');
+                if (state.higherEd) {
+                    edBadge.classList.remove('hidden');
+                    edBadge.classList.add('inline-block');
+                } else {
+                    edBadge.classList.add('hidden');
+                    edBadge.classList.remove('inline-block');
+                }
 
                 document.getElementById('detailRoute').innerHTML = state.route;
                 document.getElementById('detailProcurement').innerText = state.insight;
