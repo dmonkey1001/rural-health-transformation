@@ -110,25 +110,33 @@
             <div class="md:col-span-4 bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-center">
                 <h3 class="text-lg font-bold text-slate-800 mb-3"><i class="fa-solid fa-magnifying-glass-chart text-dellBlue mr-2"></i>Analysis Methodology</h3>
                 <p class="text-sm text-slate-600 mb-4">
-                    Since concrete "Transformation Plans" are not public for every state, this model uses the <strong>Primary Grantee Status</strong> of the State Office of Rural Health (SORH) as the predictor.
+                    Rather than focusing strictly on the receiving entity (e.g., DOH vs. University), our model now maps each state's procurement flow to one of four <strong>Strategic Distribution Archetypes</strong> to dictate sales engagement.
                 </p>
                 <div class="space-y-3">
                     <div class="flex items-start">
-                        <div class="w-3 h-3 rounded-full bg-teal-600 mt-1 mr-3 shadow-sm"></div>
-                        <p class="text-xs text-slate-600 leading-tight"><strong>State DOH (84%):</strong> Funds managed by Health Dept. High probability of sub-grants or centralized procurement.</p>
+                        <div class="w-3 h-3 rounded-full bg-blue-500 mt-1 mr-3 shadow-sm flex-shrink-0"></div>
+                        <p class="text-xs text-slate-600 leading-tight"><strong>Centralized:</strong> State retains funds; enterprise stack target.</p>
                     </div>
                     <div class="flex items-start">
-                        <div class="w-3 h-3 rounded-full bg-indigo-500 mt-1 mr-3 shadow-sm"></div>
-                        <p class="text-xs text-slate-600 leading-tight"><strong>University (16%):</strong> Funds managed by Academic Centers. Focus on education, data, and technical services.</p>
+                        <div class="w-3 h-3 rounded-full bg-emerald-500 mt-1 mr-3 shadow-sm flex-shrink-0"></div>
+                        <p class="text-xs text-slate-600 leading-tight"><strong>Regional:</strong> Hub-and-spoke; target CINs/Collaboratives.</p>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="w-3 h-3 rounded-full bg-amber-500 mt-1 mr-3 shadow-sm flex-shrink-0"></div>
+                        <p class="text-xs text-slate-600 leading-tight"><strong>Sub-Grant:</strong> Decentralized portal; high-velocity channel sales.</p>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="w-3 h-3 rounded-full bg-purple-500 mt-1 mr-3 shadow-sm flex-shrink-0"></div>
+                        <p class="text-xs text-slate-600 leading-tight"><strong>Tribal:</strong> Direct allocations; target Tribal Health Orgs.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Viz 1: Entity Distribution -->
+            <!-- Viz 1: Archetype Distribution -->
             <div class="md:col-span-4 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-4 text-center">Primary Recipient Entities</h3>
+                <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-4 text-center">National Archetype Distribution</h3>
                 <div class="chart-container">
-                    <canvas id="entityChart"></canvas>
+                    <canvas id="archetypeChart"></canvas>
                 </div>
             </div>
 
@@ -175,7 +183,7 @@
                                 <i class="fa-solid fa-map text-2xl"></i>
                             </div>
                             <p class="text-lg font-bold text-slate-600 mb-1">Select a State</p>
-                            <p class="text-sm">Click on any state on the map to analyze its funding distribution route and Dell strategy.</p>
+                            <p class="text-sm">Click on any state on the map to analyze its strategic archetype and sales approach.</p>
                         </div>
 
                         <!-- Active Content (Hidden by default) -->
@@ -189,8 +197,8 @@
                                     <div>
                                         <h2 id="detailName" class="text-3xl font-bold mb-1">State Name</h2>
                                         <div class="flex flex-wrap gap-2 mt-2">
-                                            <span id="detailType" class="inline-block bg-slate-700 text-slate-100 text-xs px-2.5 py-1 rounded border border-slate-600 font-medium shadow-sm">Recipient Type</span>
-                                            <span id="detailTech" class="inline-block bg-indigo-500/20 text-indigo-100 text-xs px-2.5 py-1 rounded border border-indigo-500/30 font-medium shadow-sm">Tech Focus</span>
+                                            <span id="detailArchetype" class="inline-block text-xs px-2.5 py-1 rounded border font-bold shadow-sm">Archetype</span>
+                                            <span id="detailTech" class="inline-block bg-slate-700 text-slate-100 text-xs px-2.5 py-1 rounded border border-slate-600 font-medium shadow-sm">Tech Focus</span>
                                         </div>
                                     </div>
                                     <span id="detailAbbr" class="text-4xl font-black text-slate-600 opacity-50">ST</span>
@@ -236,15 +244,15 @@
             </div>
         </section>
 
-        <!-- ROW 2: Distribution Archetypes -->
+        <!-- ROW 2: Distribution Archetypes Legend -->
         <section class="w-full">
             <div class="flex items-center gap-2 mb-6 mt-4">
                 <i class="fa-solid fa-network-wired text-dellBlue text-xl"></i>
-                <h2 class="text-2xl font-bold text-slate-800">Distribution Archetypes</h2>
+                <h2 class="text-2xl font-bold text-slate-800">Distribution Archetypes Defined</h2>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 
-                <div class="glass-card rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border-l-4 border-l-blue-500">
+                <div class="glass-card rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border-l-4 border-l-blue-500 cursor-pointer">
                     <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600 mb-4">
                         <i class="fa-solid fa-building-columns text-xl"></i>
                     </div>
@@ -256,7 +264,7 @@
                     </div>
                 </div>
 
-                <div class="glass-card rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border-l-4 border-l-emerald-500">
+                <div class="glass-card rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border-l-4 border-l-emerald-500 cursor-pointer">
                     <div class="w-12 h-12 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600 mb-4">
                         <i class="fa-solid fa-diagram-project text-xl"></i>
                     </div>
@@ -268,7 +276,7 @@
                     </div>
                 </div>
 
-                <div class="glass-card rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border-l-4 border-l-amber-500">
+                <div class="glass-card rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border-l-4 border-l-amber-500 cursor-pointer">
                     <div class="w-12 h-12 rounded-lg bg-amber-100 flex items-center justify-center text-amber-600 mb-4">
                         <i class="fa-solid fa-hand-holding-dollar text-xl"></i>
                     </div>
@@ -280,7 +288,7 @@
                     </div>
                 </div>
 
-                <div class="glass-card rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border-l-4 border-l-purple-500">
+                <div class="glass-card rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border-l-4 border-l-purple-500 cursor-pointer">
                     <div class="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center text-purple-600 mb-4">
                         <i class="fa-solid fa-campground text-xl"></i>
                     </div>
@@ -330,7 +338,7 @@
                                 <td class="py-5 px-6 font-bold text-emerald-600 text-lg">$281.3M</td>
                                 <td class="py-5 px-6">
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200 shadow-sm">
-                                        Decentralized / Subcontractor
+                                        Competitive Sub-Grant
                                     </span>
                                 </td>
                                 <td class="py-5 px-6 text-sm text-slate-700 leading-relaxed">
@@ -349,7 +357,7 @@
                                 <td class="py-4 px-6 font-semibold text-slate-700">$206.9M</td>
                                 <td class="py-4 px-6">
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-blue-100 text-blue-800 border border-blue-200 shadow-sm">
-                                        Centralized
+                                        Centralized Command
                                     </span>
                                 </td>
                                 <td class="py-4 px-6 text-sm text-slate-600 leading-relaxed">
@@ -368,7 +376,7 @@
                                 <td class="py-4 px-6 font-semibold text-slate-700">$195.0M</td>
                                 <td class="py-4 px-6">
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-blue-100 text-blue-800 border border-blue-200 shadow-sm">
-                                        Centralized
+                                        Centralized Command
                                     </span>
                                 </td>
                                 <td class="py-4 px-6 text-sm text-slate-600 leading-relaxed">
@@ -387,7 +395,7 @@
                                 <td class="py-4 px-6 font-semibold text-slate-700">$156.1M</td>
                                 <td class="py-4 px-6">
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-blue-100 text-blue-800 border border-blue-200 shadow-sm">
-                                        Centralized
+                                        Centralized Command
                                     </span>
                                 </td>
                                 <td class="py-4 px-6 text-sm text-slate-600 leading-relaxed">
@@ -406,7 +414,7 @@
                                 <td class="py-4 px-6 font-semibold text-slate-700">$190.0M</td>
                                 <td class="py-4 px-6">
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-blue-100 text-blue-800 border border-blue-200 shadow-sm">
-                                        Centralized
+                                        Centralized Command
                                     </span>
                                 </td>
                                 <td class="py-4 px-6 text-sm text-slate-600 leading-relaxed">
@@ -444,7 +452,7 @@
                                 <td class="py-4 px-6 font-semibold text-slate-700">$208.7M</td>
                                 <td class="py-4 px-6">
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-blue-100 text-blue-800 border border-blue-200 shadow-sm">
-                                        Centralized
+                                        Centralized Command
                                     </span>
                                 </td>
                                 <td class="py-4 px-6 text-sm text-slate-600 leading-relaxed">
@@ -519,58 +527,58 @@
     <!-- Application Logic -->
     <script>
         // --- Data Source: Rural Health Funding Landscape ---
-        // Updated with 2026 Tech Investment Focus mapping for Dell
+        // Refactored to map states by their Primary Distribution Archetype
         const stateData = [
-            { abbr: "AL", name: "Alabama", type: "doh", techFocus: "Cloud & Edge", recipient: "AL Dept of Public Health", confidence: "high", route: "Funds flow to ADPH. Likely retained for technical assistance programs and sub-granted to rural hospitals for specific quality initiatives.", insight: "Position VxRail and PowerEdge for modernizing legacy on-prem hospital servers." },
-            { abbr: "AK", name: "Alaska", type: "doh", techFocus: "Telehealth & Endpoints", recipient: "AK DHSS", confidence: "high", route: "Funds flow to DHSS. Due to geography, significant portion likely used for telehealth infrastructure and travel/logistics support for remote clinics.", insight: "Focus on Latitude Rugged devices and edge gateways for extreme remote connectivity." },
-            { abbr: "AZ", name: "Arizona", type: "university", techFocus: "Data & AI", recipient: "Univ of Arizona", confidence: "high", route: "Funds go to University. Distribution focuses on workforce training, data analysis, and academic support to CAHs.", insight: "Target AI-ready workstations and high-compute servers for university-led population health research." },
-            { abbr: "AR", name: "Arkansas", type: "doh", techFocus: "Cybersecurity", recipient: "AR Dept of Health", confidence: "high", route: "Funds flow to ADH. High priority on securing patient data across disparate rural clinic networks.", insight: "Lead with Zero-Trust infrastructure and PowerProtect backup/recovery solutions." },
-            { abbr: "CA", name: "California", type: "doh", techFocus: "Data & AI", recipient: "Dept of Health Care Access & Info", confidence: "high", route: "Funds go to HCAI. Highly structured capital grants. Less likely to be simple cash distribution.", insight: "Strong focus on statewide data reporting; position APEX storage and data lake solutions." },
-            { abbr: "CO", name: "Colorado", type: "doh", techFocus: "Telehealth & Endpoints", recipient: "CO Dept of Public Health", confidence: "high", route: "Funds flow to CDPHE. Strong history of collaborative grants with the Colorado Rural Health Center.", insight: "Partner with non-profits to supply standardized OptiPlex and Latitude telehealth carts." },
-            { abbr: "CT", name: "Connecticut", type: "doh", techFocus: "Cybersecurity", recipient: "CT Dept of Public Health", confidence: "medium", route: "Funds flow to DPH. Since CT has few 'rural' definitions, funds likely support primary care network security.", insight: "Focus on endpoint security and compliance solutions for FQHCs." },
-            { abbr: "DE", name: "Delaware", type: "doh", techFocus: "Data & AI", recipient: "DE DHSS", confidence: "medium", route: "Funds flow to DHSS. Likely used for recruitment/retention programs and state-wide health planning.", insight: "Position analytics dashboards and backend storage for state-level health planning." },
-            { abbr: "FL", name: "Florida", type: "doh", techFocus: "Cloud & Edge", recipient: "FL Dept of Health", confidence: "high", route: "Funds flow to DOH. Strong decentralization to County Health Departments.", insight: "Target individual County Health Departments with standardized edge server deployments." },
-            { abbr: "GA", name: "Georgia", type: "doh", techFocus: "Cybersecurity", recipient: "GA Dept of Community Health", confidence: "high", route: "Funds go to State Office of Rural Health. 2026 Shift: Emergency reallocation of funds specifically to combat rural hospital ransomware attacks.", insight: "Urgent need for immutable backups, endpoint detection (MDR), and ransomware recovery (PowerProtect)." },
-            { abbr: "HI", name: "Hawaii", type: "doh", techFocus: "Telehealth & Endpoints", recipient: "HI Dept of Health", confidence: "medium", route: "Funds flow to DOH. Likely used to subsidize transport/access between islands.", insight: "Logistics, mobile connectivity, and rugged edge endpoints for inter-island care." },
-            { abbr: "ID", name: "Idaho", type: "doh", techFocus: "Telehealth & Endpoints", recipient: "ID Dept of Health & Welfare", confidence: "high", route: "Funds flow to DHW. Often works closely with Idaho Hospital Association.", insight: "Bundle telehealth hardware solutions with Hospital Association training programs." },
-            { abbr: "IL", name: "Illinois", type: "doh", techFocus: "Cloud & Edge", recipient: "IL Dept of Public Health", confidence: "high", route: "Funds flow to IDPH. Traditional sub-granting model to Critical Access Hospitals (CAHs) for equipment.", insight: "Direct sales to CAHs using state grant money for server and storage refreshes." },
-            { abbr: "IN", name: "Indiana", type: "doh", techFocus: "Telehealth & Endpoints", recipient: "IN Dept of Health", confidence: "high", route: "Funds flow to IDOH. Strong partnership with Indiana Rural Health Association.", insight: "Engage IRHA to deploy standardized remote-care endpoint packages." },
-            { abbr: "IA", name: "Iowa", type: "doh", techFocus: "Cybersecurity", recipient: "IA Dept of Public Health", confidence: "high", route: "Funds flow to IDPH. Highly organized state systems requiring secure integrations.", insight: "Focus on network security and secure remote access for distributed clinics." },
-            { abbr: "KS", name: "Kansas", type: "doh", techFocus: "Cloud & Edge", recipient: "KS Dept of Health & Env", confidence: "high", route: "Funds flow to KDHE. Likely directed toward local health departments.", insight: "Local Health Department infrastructure modernization (servers/switches)." },
-            { abbr: "KY", name: "Kentucky", type: "university", techFocus: "Data & AI", recipient: "Univ of Kentucky", confidence: "high", route: "Funds flow to UK. A focus on research, policy analysis, and workforce education.", insight: "Academic computing environments; position high-performance computing (HPC) nodes." },
-            { abbr: "LA", name: "Louisiana", type: "doh", techFocus: "Cloud & Edge", recipient: "LA Dept of Health", confidence: "high", route: "Bureau of Primary Care and Rural Health. Likely flows to FQHCs for capacity building.", insight: "FQHC network infrastructure upgrades and centralized data management." },
-            { abbr: "ME", name: "Maine", type: "doh", techFocus: "Data & AI", recipient: "ME DHHS", confidence: "medium", route: "Funds flow to Maine CDC. Strong emphasis on public health infrastructure integration.", insight: "Data interoperability solutions between rural clinics and the state CDC." },
-            { abbr: "MD", name: "Maryland", type: "doh", techFocus: "Data & AI", recipient: "MD Dept of Health", confidence: "high", route: "Funds flow to State Office of Rural Health. Maryland has a unique All-Payer model.", insight: "High-level consulting, value-based care analytics, and massive data storage." },
-            { abbr: "MA", name: "Massachusetts", type: "doh", techFocus: "Cybersecurity", recipient: "MA Dept of Public Health", confidence: "medium", route: "Funds flow to DPH. Focus on western MA health equity and small hospital stability.", insight: "Compliance and cybersecurity auditing tools for small independent hospitals." },
-            { abbr: "MI", name: "Michigan", type: "doh", techFocus: "Cybersecurity", recipient: "MI DHHS", confidence: "high", route: "Funds flow to MDHHS. Strong partnership with Michigan Center for Rural Health.", insight: "Statewide initiatives to secure rural health data exchanges; position Dell Security." },
-            { abbr: "MN", name: "Minnesota", type: "doh", techFocus: "Cloud & Edge", recipient: "MN Dept of Health", confidence: "high", route: "Office of Rural Health. Very sophisticated grant making. Sub-granted competitively.", insight: "Hospitals will have competitive grant money; target core infrastructure overhauls." },
-            { abbr: "MS", name: "Mississippi", type: "doh", techFocus: "Cloud & Edge", recipient: "MS State Dept of Health", confidence: "high", route: "Funds flow to MSDH. Crisis management focus. Likely direct support for keeping rural hospitals open.", insight: "Cost-reduction technologies; HCI (VxRail) to reduce IT headcount needs." },
-            { abbr: "MO", name: "Missouri", type: "doh", techFocus: "Cloud & Edge", recipient: "MO Dept of Health", confidence: "high", route: "Funds flow to DHSS. Likely used for operational support and sharing best practices.", insight: "State-wide shared services platforms and hybrid cloud implementations." },
-            { abbr: "MT", name: "Montana", type: "university", techFocus: "Telehealth & Endpoints", recipient: "Montana State Univ", confidence: "high", route: "Funds flow to MSU. Strong education and AHEC focus.", insight: "Simulation lab tech, VR training endpoints, and high-res medical displays." },
-            { abbr: "NE", name: "Nebraska", type: "doh", techFocus: "Cloud & Edge", recipient: "NE DHHS", confidence: "high", route: "Funds flow to DHHS. Sub-grants to local hospitals for specific QI and financial improvements.", insight: "Hospital operational efficiency tools; hyperconverged infrastructure." },
-            { abbr: "NV", name: "Nevada", type: "university", techFocus: "Telehealth & Endpoints", recipient: "Univ of Nevada, Reno", confidence: "high", route: "Funds flow to UNR. Focus on telehealth and workforce extension into vast remote areas.", insight: "Telehealth backbone infrastructure and remote edge computing devices." },
-            { abbr: "NH", name: "New Hampshire", type: "doh", techFocus: "Cybersecurity", recipient: "NH DHHS", confidence: "medium", route: "Funds flow to DHHS. Focus on behavioral health integration in rural areas.", insight: "Securing sensitive behavioral health data; endpoint encryption." },
-            { abbr: "NJ", name: "New Jersey", type: "doh", techFocus: "Data & AI", recipient: "NJ Dept of Health", confidence: "low", route: "Funds flow to DOH. NJ has limited 'rural' areas; funds likely directed to specific networks.", insight: "Target specific health networks with population health analytics hardware." },
-            { abbr: "NM", name: "New Mexico", type: "doh", techFocus: "Telehealth & Endpoints", recipient: "NM Dept of Health", confidence: "high", route: "Funds flow to DOH. Focus on primary care access and tribal health integration.", insight: "Tribal health clinic modernization; reliable endpoints and networking." },
-            { abbr: "NY", name: "New York", type: "doh", techFocus: "Data & AI", recipient: "NY State Dept of Health", confidence: "high", route: "Charles D. Cook Office of Rural Health. Funds likely used for network planning grants.", insight: "Network-level analytics and state-aggregated data center solutions." },
-            { abbr: "NC", name: "North Carolina", type: "doh", techFocus: "Cloud & Edge", recipient: "NC DHHS", confidence: "high", route: "Office of Rural Health. Direct grants to safety net providers and farmworker health.", insight: "Safety net provider tech refreshes; edge servers for remote clinics." },
-            { abbr: "ND", name: "North Dakota", type: "university", techFocus: "Data & AI", recipient: "Univ of North Dakota", confidence: "high", route: "Center for Rural Health at UND. Academic-led distribution. Focus on research.", insight: "Research data tools; scalable unstructured data storage (PowerScale)." },
-            { abbr: "OH", name: "Ohio", type: "doh", techFocus: "Cybersecurity", recipient: "OH Dept of Health", confidence: "high", route: "Funds flow to ODH. Likely competitive sub-grants to rural communities.", insight: "Bundle grant applications with standardized cybersecurity audits/hardware." },
-            { abbr: "OK", name: "Oklahoma", type: "university", techFocus: "Telehealth & Endpoints", recipient: "Oklahoma State Univ", confidence: "high", route: "Center for Rural Health at OSU. Medical school integration.", insight: "Medical education tech and mobile clinic endpoints." },
-            { abbr: "OR", name: "Oregon", type: "university", techFocus: "Data & AI", recipient: "OHSU", confidence: "high", route: "Office of Rural Health at OHSU. Academic management. Focus on provider tracking.", insight: "Workforce management data systems; university data center expansion." },
-            { abbr: "PA", name: "Pennsylvania", type: "doh", techFocus: "Cybersecurity", recipient: "PA Dept of Health", confidence: "medium", route: "Funds flow to DOH. Likely partnership with PA Office of Rural Health (Penn State).", insight: "Protecting academic-to-rural-hospital data pipelines." },
-            { abbr: "RI", name: "Rhode Island", type: "doh", techFocus: "Data & AI", recipient: "RI Dept of Health", confidence: "low", route: "Funds flow to DOH. Very limited rural scope. Funds used for health equity.", insight: "Health equity mapping requires heavy data analysis and visualization workstations." },
-            { abbr: "SC", name: "South Carolina", type: "doh", techFocus: "Cloud & Edge", recipient: "SC Office of Rural Health", confidence: "medium", route: "Funds flow to SCORH (Non-Profit), then to hospitals as services.", insight: "Direct relationship with SCORH to build a centralized managed cloud for hospitals." },
-            { abbr: "SD", name: "South Dakota", type: "doh", techFocus: "Telehealth & Endpoints", recipient: "SD Dept of Health", confidence: "high", route: "Funds flow to DOH. Focus on EMS and CAH stability. Direct support.", insight: "EMS technology, rugged tablets for ambulances, and comms gateways." },
-            { abbr: "TN", name: "Tennessee", type: "doh", techFocus: "Cloud & Edge", recipient: "TN Dept of Health", confidence: "high", route: "Funds flow to TDH. Strong focus on replacing closed hospitals with new models (REH).", insight: "New Rural Emergency Hospital (REH) builds mean ground-up IT infrastructure (servers to endpoints)." },
-            { abbr: "TX", name: "Texas", type: "doh", techFocus: "Cloud & Edge", recipient: "HHSC & TDA Joint Task Force", confidence: "high", route: "Major 2026 shift: Funds are now jointly managed by Health & Human Services (HHSC) and Dept. of Agriculture under a new Rural Hospital Resilience initiative. Moving away from just broadband to direct IT infrastructure grants for at-risk hospitals.", insight: "Massive opportunity for VxRail and PowerEdge as Texas aggressively modernizes on-prem data centers to prevent rural hospital closures." },
-            { abbr: "UT", name: "Utah", type: "doh", techFocus: "Telehealth & Endpoints", recipient: "UT Dept of Health", confidence: "high", route: "Funds flow to DOH. Focus on telehealth and independent hospital survival.", insight: "Telehealth focus; remote patient monitoring gateways." },
-            { abbr: "VT", name: "Vermont", type: "doh", techFocus: "Cybersecurity", recipient: "VT Dept of Health", confidence: "high", route: "Funds flow to DOH. Integrated with Blueprint for Health.", insight: "Securing primary care data exchanges across the state network." },
-            { abbr: "VA", name: "Virginia", type: "doh", techFocus: "Data & AI", recipient: "VA Dept of Health", confidence: "high", route: "Funds flow to VDH. Focus on health equity and social determinants.", insight: "Social Determinants of Health (SDOH) massive data processing infrastructure." },
-            { abbr: "WA", name: "Washington", type: "doh", techFocus: "Data & AI", recipient: "WA State Dept of Health", confidence: "high", route: "Funds flow to DOH. Collaborative with WSU. Strong focus on value-based care.", insight: "Value-based care analytics requiring high-performance computing clusters." },
-            { abbr: "WV", name: "West Virginia", type: "doh", techFocus: "Cloud & Edge", recipient: "WV DHHR", confidence: "high", route: "Funds flow to DHHR. Critical support for a very distressed rural hospital network.", insight: "Distressed asset turnaround; replace aging servers with efficient HCI solutions." },
-            { abbr: "WI", name: "Wisconsin", type: "university", techFocus: "Data & AI", recipient: "Univ of Wisconsin", confidence: "high", route: "WI Office of Rural Health at UW. Academic focus but strong operational support.", insight: "Hybrid Academic/Operational tools; university-managed cloud services." },
-            { abbr: "WY", name: "Wyoming", type: "doh", techFocus: "Data & AI", recipient: "WY Dept of Health", confidence: "high", route: "Funds flow to WDH. 2026 Shift: Building a centralized frontier-medicine data exchange rather than just endpoints.", insight: "Statewide data lakes and secure edge-to-core data pipelines." }
+            { abbr: "AL", name: "Alabama", archetype: "regional", techFocus: "Cloud & Edge", confidence: "high", route: "Building 'Regional shared-service hubs' to manage EHR and cybersecurity for clusters of independent hospitals.", insight: "Position VxRail and PowerEdge for modernizing legacy on-prem hospital servers via these regional hubs." },
+            { abbr: "AK", name: "Alaska", archetype: "tribal", techFocus: "Telehealth & Endpoints", confidence: "high", route: "Heavy reliance on Tribal Health Organizations (THOs) bypassing state bureaucracy. Investments in medical transport and remote monitoring in villages.", insight: "Focus on Latitude Rugged devices and edge gateways for extreme remote connectivity." },
+            { abbr: "AZ", name: "Arizona", archetype: "centralized", techFocus: "Data & AI", confidence: "high", route: "AHCCCS (Medicaid) utilizing Managed Care Organizations to distribute funds centrally for workforce pipelines and data integration.", insight: "Target AI-ready workstations and high-compute servers for university-led population health research." },
+            { abbr: "AR", name: "Arkansas", archetype: "centralized", techFocus: "Cybersecurity", confidence: "high", route: "Centralized procurement via Dept of Finance for a statewide telehealth platform or data lake ('ROADMAP').", insight: "Lead with Zero-Trust infrastructure and PowerProtect backup/recovery solutions." },
+            { abbr: "CA", name: "California", archetype: "regional", techFocus: "Data & AI", confidence: "high", route: "Funding a 'Rural Technical Assistance Center' and Hub-and-Spoke networks for HIE/cyber, anchored by larger hospitals.", insight: "Strong focus on statewide data reporting; position APEX storage and data lake solutions." },
+            { abbr: "CO", name: "Colorado", archetype: "subgrant", techFocus: "Telehealth & Endpoints", confidence: "high", route: "Providing capital grants to providers joining the Hospital Transformation Program (HTP) to upgrade endpoints and behavioral health wings.", insight: "Partner with non-profits to supply standardized OptiPlex and Latitude telehealth carts." },
+            { abbr: "CT", name: "Connecticut", archetype: "subgrant", techFocus: "Cybersecurity", confidence: "medium", route: "Targeted grants focusing on 'treatment barriers' and patient-centered care. High probability of sub-grants.", insight: "Focus on endpoint security and compliance solutions for FQHCs." },
+            { abbr: "DE", name: "Delaware", archetype: "centralized", techFocus: "Data & AI", confidence: "high", route: "Massive capital investments from the state level for 'Hope Centers' and centralized HIE Expansion.", insight: "Position analytics dashboards and backend storage for state-level health planning." },
+            { abbr: "FL", name: "Florida", archetype: "regional", techFocus: "Cloud & Edge", confidence: "high", route: "Competitive RFA approach requiring providers to form legal entities and regional partnerships to apply for tech funds.", insight: "Target individual County Health Departments with standardized edge server deployments." },
+            { abbr: "GA", name: "Georgia", archetype: "regional", techFocus: "Cybersecurity", confidence: "high", route: "DCH manages the GREAT Health program, funding initiatives like Treat-vs-Transport telehealth pilots for regional EMS systems.", insight: "Urgent need for immutable backups, endpoint detection (MDR), and ransomware recovery (PowerProtect)." },
+            { abbr: "HI", name: "Hawaii", archetype: "centralized", techFocus: "Telehealth & Endpoints", confidence: "medium", route: "State Executive Office distributing funds directly for air ambulance/inter-island transport subsidies and telemedicine.", insight: "Logistics, mobile connectivity, and rugged edge endpoints for inter-island care." },
+            { abbr: "ID", name: "Idaho", archetype: "subgrant", techFocus: "Telehealth & Endpoints", confidence: "high", route: "Pursuing data-driven, community-targeted efforts via direct grants to hospitals for tele-stroke and tele-psych.", insight: "Bundle telehealth hardware solutions with Hospital Association training programs." },
+            { abbr: "IL", name: "Illinois", archetype: "subgrant", techFocus: "Cloud & Edge", confidence: "high", route: "HFS is using funds to right-size care delivery via direct transformation grants to rural hospitals to convert service lines.", insight: "Direct sales to CAHs using state grant money for server and storage refreshes." },
+            { abbr: "IN", name: "Indiana", archetype: "centralized", techFocus: "Telehealth & Endpoints", confidence: "high", route: "Building a centralized Medical Operations Coordination Center (MOCC). Retaining significant funds at state level for tech.", insight: "Engage IRHA to deploy standardized remote-care endpoint packages." },
+            { abbr: "IA", name: "Iowa", archetype: "centralized", techFocus: "Cybersecurity", confidence: "high", route: "Focus on connecting local care to specialized centers and centrally subsidizing rural connections to the state HIE.", insight: "Focus on network security and secure remote access for distributed clinics." },
+            { abbr: "KS", name: "Kansas", archetype: "regional", techFocus: "Cloud & Edge", confidence: "high", route: "KDHE coordinates with the 'Rural Health Alliance', heavily pushing rural providers into Accountable Care Organizations (ACOs).", insight: "Local Health Department infrastructure modernization (servers/switches)." },
+            { abbr: "KY", name: "Kentucky", archetype: "regional", techFocus: "Data & AI", confidence: "high", route: "Establishing public-private partnerships to build 'Rural Community Hubs' for chronic care innovation.", insight: "Academic computing environments; position high-performance computing (HPC) nodes." },
+            { abbr: "LA", name: "Louisiana", archetype: "subgrant", techFocus: "Cloud & Edge", confidence: "high", route: "Establishing a 'Rural Tech Catalyst Fund' specifically acting as a voucher program for rural providers to purchase technology.", insight: "FQHC network infrastructure upgrades and centralized data management." },
+            { abbr: "ME", name: "Maine", archetype: "centralized", techFocus: "Data & AI", confidence: "high", route: "Explicitly planning a 'Rural AI Hub' centralized at the state or a major academic center to drive analytics.", insight: "Data interoperability solutions between rural clinics and the state CDC." },
+            { abbr: "MD", name: "Maryland", archetype: "centralized", techFocus: "Data & AI", confidence: "high", route: "State-managed centralized approach heavily utilizing the All-Payer model to dictate rural stability.", insight: "High-level consulting, value-based care analytics, and massive data storage." },
+            { abbr: "MA", name: "Massachusetts", archetype: "centralized", techFocus: "Cybersecurity", confidence: "medium", route: "State EOHHS launching SHINE HT program and handling SDOH tracking centrally.", insight: "Compliance and cybersecurity auditing tools for small independent hospitals." },
+            { abbr: "MI", name: "Michigan", archetype: "subgrant", techFocus: "Cybersecurity", confidence: "high", route: "Direct grants to Community Mental Health Services Programs (CMHSPs) to buy vehicles and staff mobile crisis units.", insight: "Statewide initiatives to secure rural health data exchanges; position Dell Security." },
+            { abbr: "MN", name: "Minnesota", archetype: "subgrant", techFocus: "Cloud & Edge", confidence: "high", route: "MDH is running a 'Collaboration for Financial Viability' program consisting of direct grants to providers.", insight: "Hospitals will have competitive grant money; target core infrastructure overhauls." },
+            { abbr: "MS", name: "Mississippi", archetype: "subgrant", techFocus: "Cloud & Edge", confidence: "high", route: "Direct grants for telehealth and health IT upgrades under 'Health Technology Advancement and Modernization'.", insight: "Cost-reduction technologies; HCI (VxRail) to reduce IT headcount needs." },
+            { abbr: "MO", name: "Missouri", archetype: "regional", techFocus: "Cloud & Edge", confidence: "high", route: "Activating local community hubs. Funds flow to local lead agencies (hospitals or CAP agencies) to coordinate.", insight: "State-wide shared services platforms and hybrid cloud implementations." },
+            { abbr: "MT", name: "Montana", archetype: "subgrant", techFocus: "Telehealth & Endpoints", confidence: "high", route: "Funding critical facility repairs and modernization across rural facilities via direct capital injections.", insight: "Simulation lab tech, VR training endpoints, and high-res medical displays." },
+            { abbr: "NE", name: "Nebraska", archetype: "subgrant", techFocus: "Cloud & Edge", confidence: "high", route: "Direct wellness and hospital sustainability grants, engaging the Nebraska Hospital Association.", insight: "Hospital operational efficiency tools; hyperconverged infrastructure." },
+            { abbr: "NV", name: "Nevada", archetype: "centralized", techFocus: "Telehealth & Endpoints", confidence: "high", route: "State-managed allocation largely flowing to NSHE institutions for workforce and centralized telehealth extension.", insight: "Telehealth backbone infrastructure and remote edge computing devices." },
+            { abbr: "NH", name: "New Hampshire", archetype: "centralized", techFocus: "Cybersecurity", confidence: "high", route: "State DHHS scaling the CCBHC model statewide, effectively directing the IT upgrades from a central level.", insight: "Securing sensitive behavioral health data; endpoint encryption." },
+            { abbr: "NJ", name: "New Jersey", archetype: "subgrant", techFocus: "Data & AI", confidence: "high", route: "Concentrating funds via a Request for Applications (RFA) distributed directly to providers and tribal organizations.", insight: "Target specific health networks with population health analytics hardware." },
+            { abbr: "NM", name: "New Mexico", archetype: "tribal", techFocus: "Telehealth & Endpoints", confidence: "medium", route: "Significant portion of funds acting as pass-throughs to Indian Health Service (IHS) and 638 facilities.", insight: "Tribal health clinic modernization; reliable endpoints and networking." },
+            { abbr: "NY", name: "New York", archetype: "centralized", techFocus: "Data & AI", confidence: "high", route: "DOH centrally dictating 'Rural Roots' pipeline and explicit state-managed cybersecurity strengthening initiatives.", insight: "Network-level analytics and state-aggregated data center solutions." },
+            { abbr: "NC", name: "North Carolina", archetype: "regional", techFocus: "Cloud & Edge", confidence: "high", route: "Launching locally governed 'NC ROOTS' Hubs. Regional bodies connecting medical and mental health supports.", insight: "Safety net provider tech refreshes; edge servers for remote clinics." },
+            { abbr: "ND", name: "North Dakota", archetype: "centralized", techFocus: "Data & AI", confidence: "high", route: "Massive centralized 'Connect Tech' play managed alongside the Bank of North Dakota for unified EHR/payer hubs.", insight: "Research data tools; scalable unstructured data storage (PowerScale)." },
+            { abbr: "OH", name: "Ohio", archetype: "regional", techFocus: "Cybersecurity", confidence: "high", route: "Tiered funding for regional alliances (Clinically Integrated Networks) to coordinate care and shared services.", insight: "Bundle grant applications with standardized cybersecurity audits/hardware." },
+            { abbr: "OK", name: "Oklahoma", archetype: "subgrant", techFocus: "Telehealth & Endpoints", confidence: "high", route: "Pivoted to offering a direct microgrants program ($50k-$250k) for one-time equipment purchases by clinics.", insight: "Medical education tech and mobile clinic endpoints." },
+            { abbr: "OR", name: "Oregon", archetype: "tribal", techFocus: "Data & AI", confidence: "high", route: "Heavy focus on long-term shared infrastructure and explicit Tribal sovereignty distributions.", insight: "Workforce management data systems; university data center expansion." },
+            { abbr: "PA", name: "Pennsylvania", archetype: "regional", techFocus: "Cybersecurity", confidence: "high", route: "Establishing 'Rural Care Collaboratives' (RCCs). Regional bodies dictating local tech solutions.", insight: "Protecting academic-to-rural-hospital data pipelines." },
+            { abbr: "RI", name: "Rhode Island", archetype: "centralized", techFocus: "Data & AI", confidence: "high", route: "Boutique pilot lab exploring a 'State-Sponsored EHR' and centralized Rural Health Data Hub.", insight: "Health equity mapping requires heavy data analysis and visualization workstations." },
+            { abbr: "SC", name: "South Carolina", archetype: "subgrant", techFocus: "Cloud & Edge", confidence: "high", route: "Implementing a 'Tech Catalyst Fund' providing competitive seed funding directly to rural health startups/clinics.", insight: "Direct relationship with SCORH to build a centralized managed cloud for hospitals." },
+            { abbr: "SD", name: "South Dakota", archetype: "centralized", techFocus: "Telehealth & Endpoints", confidence: "high", route: "Centralized 'Tech and Data Connection' modernizing digital health and launching a statewide Rural Data Atlas.", insight: "EMS technology, rugged tablets for ambulances, and comms gateways." },
+            { abbr: "TN", name: "Tennessee", archetype: "subgrant", techFocus: "Cloud & Edge", confidence: "high", route: "Complex plan with 17 distinct initiatives, largely sub-granting for mobile units and local tech adoption.", insight: "New Rural Emergency Hospital (REH) builds mean ground-up IT infrastructure (servers to endpoints)." },
+            { abbr: "TX", name: "Texas", archetype: "subgrant", techFocus: "Cloud & Edge", confidence: "high", route: "Decentralized. 80 rural hospital districts receiving direct endpoint/infra funding. Subcontracting hubs via RFPs.", insight: "Massive opportunity for VxRail and PowerEdge as Texas aggressively modernizes on-prem data centers to prevent rural hospital closures." },
+            { abbr: "UT", name: "Utah", archetype: "centralized", techFocus: "Telehealth & Endpoints", confidence: "high", route: "Implementing state-managed PATH program to strengthen rural food infrastructure and active transportation.", insight: "Telehealth focus; remote patient monitoring gateways." },
+            { abbr: "VT", name: "Vermont", archetype: "centralized", techFocus: "Cybersecurity", confidence: "high", route: "Building a 'Clinically Integrated Network of Shared Services' featuring centralized procurement for a Shared EHR.", insight: "Securing primary care data exchanges across the state network." },
+            { abbr: "VA", name: "Virginia", archetype: "tribal", techFocus: "Data & AI", confidence: "medium", route: "DMAS prioritizing competitive grant programs specifically for federally recognized tribes and broadband extension.", insight: "Social Determinants of Health (SDOH) massive data processing infrastructure." },
+            { abbr: "WA", name: "Washington", archetype: "tribal", techFocus: "Data & AI", confidence: "high", route: "Mix of direct awards with massive explicit $20M/year tribal set-asides bypassing standard state grant flow.", insight: "Value-based care analytics requiring high-performance computing clusters." },
+            { abbr: "WV", name: "West Virginia", archetype: "subgrant", techFocus: "Cloud & Edge", confidence: "high", route: "Operating 'Smart Care Catalyst' grants, passing funds down for tech-enabled innovation at the clinic level.", insight: "Distressed asset turnaround; replace aging servers with efficient HCI solutions." },
+            { abbr: "WI", name: "Wisconsin", archetype: "regional", techFocus: "Data & AI", confidence: "high", route: "$230M total distributed to regional care coordination networks to expand capacity.", insight: "Hybrid Academic/Operational tools; university-managed cloud services." },
+            { abbr: "WY", name: "Wyoming", archetype: "centralized", techFocus: "Data & AI", confidence: "high", route: "Creating a centralized state trust structure prioritizing CAHs and dictating EMS regionalization from the top down.", insight: "Statewide data lakes and secure edge-to-core data pipelines." }
         ];
 
         // --- Logic: Map Generation & Interaction ---
@@ -579,10 +587,24 @@
             // 1. Render Map via Plotly
             function renderMap() {
                 const locations = stateData.map(s => s.abbr);
-                const hoverText = stateData.map(s => s.name + '<br>' + (s.type === 'doh' ? 'Health Dept' : 'University'));
                 
-                // Map text categories to numerical values for Plotly's colorscale
-                const zValues = stateData.map(s => s.type === 'doh' ? 1 : 2);
+                // Map Archetypes to names and numerical values for Plotly's colorscale
+                const hoverText = stateData.map(s => {
+                    let archName = "";
+                    if(s.archetype === 'centralized') archName = "Centralized Command";
+                    if(s.archetype === 'regional') archName = "Regional Coalition";
+                    if(s.archetype === 'subgrant') archName = "Competitive Sub-Grant";
+                    if(s.archetype === 'tribal') archName = "Tribal Sovereignty";
+                    return `<b>${s.name}</b><br>${archName}`;
+                });
+                
+                const zValues = stateData.map(s => {
+                    if(s.archetype === 'centralized') return 1;
+                    if(s.archetype === 'regional') return 2;
+                    if(s.archetype === 'subgrant') return 3;
+                    if(s.archetype === 'tribal') return 4;
+                    return 1;
+                });
 
                 const trace = {
                     type: 'choropleth',
@@ -593,13 +615,17 @@
                     hoverinfo: 'location+text',
                     showscale: false, 
                     colorscale: [
-                        [0, '#0076CE'],    // dellBlue for 1 (DOH)
-                        [0.5, '#0076CE'], 
-                        [0.5, '#6366f1'],  // Indigo for 2 (University)
-                        [1, '#6366f1']
+                        [0, '#3b82f6'],      // Blue-500 (Centralized)
+                        [0.25, '#3b82f6'], 
+                        [0.25, '#10b981'],   // Emerald-500 (Regional)
+                        [0.5, '#10b981'],
+                        [0.5, '#f59e0b'],    // Amber-500 (Subgrant)
+                        [0.75, '#f59e0b'],
+                        [0.75, '#8b5cf6'],   // Purple-500 (Tribal)
+                        [1, '#8b5cf6']
                     ],
                     zmin: 1,
-                    zmax: 2,
+                    zmax: 4,
                     marker: {
                         line: {
                             color: '#ffffff',
@@ -618,7 +644,7 @@
                     margin: { t: 0, b: 0, l: 0, r: 0 },
                     paper_bgcolor: 'rgba(0,0,0,0)',
                     plot_bgcolor: 'rgba(0,0,0,0)',
-                    dragmode: false // Disable panning/zooming for a cleaner UI
+                    dragmode: false // Disable panning/zooming
                 };
 
                 Plotly.newPlot('plotlyMap', [trace], layout, {responsive: true, displayModeBar: false});
@@ -643,14 +669,29 @@
                 // Populate Text
                 document.getElementById('detailName').innerText = state.name;
                 document.getElementById('detailAbbr').innerText = state.abbr;
-                document.getElementById('detailType').innerText = state.type === 'doh' ? 'State Dept of Health' : 'University System';
                 
-                // Populate New Tech Focus Badge
+                // Format Archetype Badge
+                const archBadge = document.getElementById('detailArchetype');
+                if (state.archetype === 'centralized') {
+                    archBadge.innerText = 'Centralized Command';
+                    archBadge.className = "inline-block text-xs px-2.5 py-1 rounded font-bold shadow-sm bg-blue-100 text-blue-700 border border-blue-200";
+                } else if (state.archetype === 'regional') {
+                    archBadge.innerText = 'Regional Coalition';
+                    archBadge.className = "inline-block text-xs px-2.5 py-1 rounded font-bold shadow-sm bg-emerald-100 text-emerald-700 border border-emerald-200";
+                } else if (state.archetype === 'subgrant') {
+                    archBadge.innerText = 'Competitive Sub-Grant';
+                    archBadge.className = "inline-block text-xs px-2.5 py-1 rounded font-bold shadow-sm bg-amber-100 text-amber-700 border border-amber-200";
+                } else if (state.archetype === 'tribal') {
+                    archBadge.innerText = 'Tribal Sovereignty';
+                    archBadge.className = "inline-block text-xs px-2.5 py-1 rounded font-bold shadow-sm bg-purple-100 text-purple-700 border border-purple-200";
+                }
+
+                // Populate Tech Focus Badge
                 const techBadge = document.getElementById('detailTech');
                 techBadge.innerText = state.techFocus;
                 if(state.techFocus === 'Cybersecurity') techBadge.className = "inline-block bg-red-500/20 text-red-100 text-xs px-2.5 py-1 rounded border border-red-500/30 font-medium shadow-sm";
-                else if(state.techFocus === 'Cloud & Edge') techBadge.className = "inline-block bg-blue-500/20 text-blue-100 text-xs px-2.5 py-1 rounded border border-blue-500/30 font-medium shadow-sm";
-                else if(state.techFocus === 'Telehealth & Endpoints') techBadge.className = "inline-block bg-emerald-500/20 text-emerald-100 text-xs px-2.5 py-1 rounded border border-emerald-500/30 font-medium shadow-sm";
+                else if(state.techFocus === 'Cloud & Edge') techBadge.className = "inline-block bg-sky-500/20 text-sky-100 text-xs px-2.5 py-1 rounded border border-sky-500/30 font-medium shadow-sm";
+                else if(state.techFocus === 'Telehealth & Endpoints') techBadge.className = "inline-block bg-teal-500/20 text-teal-100 text-xs px-2.5 py-1 rounded border border-teal-500/30 font-medium shadow-sm";
                 else techBadge.className = "inline-block bg-indigo-500/20 text-indigo-100 text-xs px-2.5 py-1 rounded border border-indigo-500/30 font-medium shadow-sm"; // Data & AI
 
                 document.getElementById('detailRoute').innerHTML = state.route;
@@ -666,19 +707,19 @@
                     confBar.className = 'bg-emerald-500 h-2 rounded-full transition-all duration-500';
                     confLabel.innerText = "Documented Structure";
                     confLabel.className = "text-xs font-bold text-emerald-600 px-2 py-0.5 bg-emerald-50 rounded-full border border-emerald-100";
-                    confText.innerText = "Based on verified SORH organizational chart.";
+                    confText.innerText = "Based on explicit state RHTP publication.";
                 } else if (state.confidence === 'medium') {
                     confBar.style.width = '60%';
                     confBar.className = 'bg-amber-500 h-2 rounded-full transition-all duration-500';
                     confLabel.innerText = "Inferred Structure";
                     confLabel.className = "text-xs font-bold text-amber-600 px-2 py-0.5 bg-amber-50 rounded-full border border-amber-100";
-                    confText.innerText = "Based on typical funding patterns for this state.";
+                    confText.innerText = "Based on structural extrapolation and funding trends.";
                 } else {
                     confBar.style.width = '30%';
                     confBar.className = 'bg-red-400 h-2 rounded-full transition-all duration-500';
                     confLabel.innerText = "Best Guess";
                     confLabel.className = "text-xs font-bold text-red-500 px-2 py-0.5 bg-red-50 rounded-full border border-red-100";
-                    confText.innerText = "Complex shared governance; route unclear.";
+                    confText.innerText = "Awaiting formal state documentation.";
                 }
             }
 
@@ -692,12 +733,14 @@
         // --- Chart Generation ---
         function renderCharts() {
             // Data Prep
-            const typeCounts = { doh: 0, university: 0 };
+            const archCounts = { centralized: 0, regional: 0, subgrant: 0, tribal: 0 };
             const techCounts = { cyber: 0, edge: 0, telehealth: 0, data: 0 };
 
             stateData.forEach(s => {
-                if (s.type === 'doh') typeCounts.doh++;
-                if (s.type === 'university') typeCounts.university++;
+                if (s.archetype === 'centralized') archCounts.centralized++;
+                if (s.archetype === 'regional') archCounts.regional++;
+                if (s.archetype === 'subgrant') archCounts.subgrant++;
+                if (s.archetype === 'tribal') archCounts.tribal++;
                 
                 if (s.techFocus === 'Cybersecurity') techCounts.cyber++;
                 if (s.techFocus === 'Cloud & Edge') techCounts.edge++;
@@ -705,15 +748,15 @@
                 if (s.techFocus === 'Data & AI') techCounts.data++;
             });
 
-            // Chart 1: Entities
-            const ctx1 = document.getElementById('entityChart').getContext('2d');
+            // Chart 1: Archetypes
+            const ctx1 = document.getElementById('archetypeChart').getContext('2d');
             new Chart(ctx1, {
                 type: 'doughnut',
                 data: {
-                    labels: ['State Health Dept', 'University System'],
+                    labels: ['Centralized Command', 'Regional Coalition', 'Competitive Sub-Grant', 'Tribal Sovereignty'],
                     datasets: [{
-                        data: [typeCounts.doh, typeCounts.university],
-                        backgroundColor: ['#0076CE', '#6366f1'], // dellBlue, Indigo
+                        data: [archCounts.centralized, archCounts.regional, archCounts.subgrant, archCounts.tribal],
+                        backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'], // Blue, Emerald, Amber, Purple
                         borderWidth: 0,
                         hoverOffset: 4
                     }]
@@ -722,7 +765,7 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, padding: 20 } }
+                        legend: { position: 'right', labels: { usePointStyle: true, boxWidth: 8, padding: 15 } }
                     },
                     cutout: '70%'
                 }
@@ -737,7 +780,7 @@
                     datasets: [{
                         label: 'Number of States',
                         data: [techCounts.edge, techCounts.telehealth, techCounts.data, techCounts.cyber],
-                        backgroundColor: ['#0076CE', '#10b981', '#6366f1', '#ef4444'], // Blue, Green, Indigo, Red
+                        backgroundColor: ['#0ea5e9', '#14b8a6', '#6366f1', '#ef4444'], // Sky, Teal, Indigo, Red
                         borderRadius: 4
                     }]
                 },
